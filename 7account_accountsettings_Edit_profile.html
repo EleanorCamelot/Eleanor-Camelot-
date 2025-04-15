@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل الملف الشخصي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --green: #2ecc71;
+            --section-title: #000000;
+            --link-color: #3498db;
+            --blue: #2980b9;
+            --orange: #e67e22;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-bottom: 20px;
+            padding-top: 60px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .edit-profile-container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--section-title);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+        
+        .profile-pic-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .profile-pic-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 15px;
+            cursor: pointer;
+            border: 3px solid var(--white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-pic-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-pic-edit {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            background-color: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 3px solid var(--white);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-pic-container:hover .profile-pic-edit {
+            transform: scale(1.1);
+        }
+        
+        .profile-pic-text {
+            color: var(--primary);
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--section-title);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--dark-gray);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            color: var(--text);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .validation-message {
+            font-size: 12px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .valid {
+            color: var(--green);
+        }
+        
+        .invalid {
+            color: var(--red);
+        }
+        
+        .bio-counter {
+            text-align: left;
+            font-size: 12px;
+            color: var(--dark-gray);
+            margin-top: 5px;
+        }
+        
+        .gender-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .gender-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .gender-option input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .account-info {
+            background-color: var(--gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .account-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--dark-gray);
+        }
+        
+        .account-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .account-info-label {
+            font-weight: bold;
+            color: var(--section-title);
+        }
+        
+        .account-info-value {
+            color: var(--text);
+        }
+        
+        .save-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .save-btn:hover {
+            background-color: #111111;
+        }
+        
+        .save-btn:disabled {
+            background-color: var(--dark-gray);
+            cursor: not-allowed;
+        }
+        
+        /* رابط تغيير الجنس */
+        .gender-change-link {
+            color: var(--link-color);
+            text-decoration: underline;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 5px;
+            transition: color 0.3s;
+        }
+        
+        .gender-change-link:hover {
+            color: var(--primary);
+        }
+        
+        /* أنماط جديدة للرموز */
+        .rq-code {
+            font-family: monospace;
+            background-color: var(--dark-gray);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .rq-public {
+            color: var(--blue);
+        }
+        
+        .rq-secret {
+            color: var(--orange);
+        }
+        
+        .show-secret-btn {
+            background-color: var(--orange);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .show-secret-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            display: none;
+        }
+        
+        .lock-form {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            color: var(--text);
+        }
+        
+        .lock-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .lock-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--dark-gray);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .lock-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .lock-error {
+            color: var(--red);
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .lock-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .lock-back-btn {
+            background-color: var(--blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .lock-back-btn:hover {
+            background-color: #1a5276;
+        }
+        
+        .lock-change-btn {
+            background-color: var(--orange);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .lock-change-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .change-code-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            color: white;
+            display: none;
+        }
+        
+        .change-code-form {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            color: var(--text);
+        }
+        
+        .change-code-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .change-code-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--dark-gray);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .change-code-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .change-code-error {
+            color: var(--red);
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري حفظ التغييرات...</div>
+    </div>
+    
+    <!-- شاشة القفل -->
+    <div class="lock-screen" id="lockScreen">
+        <div class="lock-form">
+            <h2 class="lock-title">أدخل رمز القفل</h2>
+            <input type="password" class="lock-input" id="lockCode" placeholder="أدخل رمز القفل الخاص بك">
+            <button class="lock-submit" id="unlockBtn">فتح</button>
+            <div class="lock-error" id="lockError">رمز القفل غير صحيح!</div>
+            
+            <div class="lock-actions">
+                <button class="lock-back-btn" id="lockBackBtn">‹ رجوع</button>
+                <button class="lock-change-btn" id="lockChangeBtn">تغيير الرمز</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- شاشة تغيير الرمز -->
+    <div class="change-code-screen" id="changeCodeScreen">
+        <div class="change-code-form">
+            <h2 class="change-code-title">تغيير رمز القفل</h2>
+            <input type="password" class="change-code-input" id="currentCode" placeholder="أدخل الرمز الحالي">
+            <input type="password" class="change-code-input" id="newCode" placeholder="أدخل الرمز الجديد">
+            <input type="password" class="change-code-input" id="confirmNewCode" placeholder="تأكيد الرمز الجديد">
+            <button class="change-code-submit" id="changeCodeBtn">تغيير الرمز</button>
+            <div class="change-code-error" id="changeCodeError"></div>
+            <button class="lock-back-btn" id="changeCodeBackBtn" style="width: 100%;">‹ رجوع</button>
+        </div>
+    </div>
+    
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="back-btn" onclick="window.location.href='7account.html'">‹</div>
+        <div class="app-title">تعديل الملف الشخصي</div>
+        <div></div>
+    </div>
+    
+    <!-- محتوى تعديل الملف الشخصي -->
+    <div class="edit-profile-container">
+        <h2 class="section-title">
+            <i class="fas fa-cog"></i>
+            إعدادات الملف الشخصي
+        </h2>
+        
+        <!-- صورة الملف الشخصي -->
+        <div class="profile-pic-section">
+            <div class="profile-pic-container">
+                <img src="storage/emulated/0/Eleanor Camelot Brand/Files/Photo/Profile_picture.jpg" alt="صورة الملف الشخصي" id="profile-pic">
+                <div class="profile-pic-edit">+</div>
+            </div>
+            <span class="profile-pic-text">تغيير صورة الملف الشخصي</span>
+            <small>أبعاد الصورة المثالية 800×800 بكسل</small>
+        </div>
+        
+        <!-- معلومات الحساب (غير قابلة للتعديل) -->
+        <div class="account-info">
+            <div class="account-info-item">
+                <span class="account-info-label">تاريخ إنشاء الحساب:</span>
+                <span class="account-info-value" id="account-creation-date"></span>
+            </div>
+            <div class="account-info-item">
+                <span class="account-info-label">الرمز العام (RQ):</span>
+                <span class="account-info-value rq-code rq-public" id="public-rq-code"></span>
+            </div>
+            <div class="account-info-item">
+                <span class="account-info-label">الرمز السري (RQ):</span>
+                <span class="account-info-value">
+                    <span id="secret-rq-placeholder">••••••••••••••••</span>
+                    <span id="secret-rq-code" class="rq-code rq-secret" style="display:none;"></span>
+                </span>
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+                <button class="show-secret-btn" id="showSecretBtn">عرض الرمز السري</button>
+            </div>
+        </div>
+        
+        <!-- نموذج التعديل -->
+        <form id="edit-profile-form">
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i>
+                    اسم المستخدم
+                </label>
+                <input type="text" id="username" class="form-control" required>
+                
+                <!-- رسائل التحقق -->
+                <div id="length-message" class="validation-message">
+                    <i class="fas fa-times invalid" id="length-icon"></i>
+                    <span>اسم مكون من خمسة أحرف أو أكثر</span>
+                </div>
+                <div id="chars-message" class="validation-message">
+                    <i class="fas fa-times invalid" id="chars-icon"></i>
+                    <span>اسم لا يحتوي على مساحات أو نقاط (يسمح باستعمال "_")</span>
+                </div>
+                <div id="unique-message" class="validation-message">
+                    <i class="fas fa-times invalid" id="unique-icon"></i>
+                    <span>اسم المستخدم متاح</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="bio">
+                    <i class="fas fa-info-circle"></i>
+                    البايو (نبذة عنك)
+                </label>
+                <textarea id="bio" class="form-control" rows="5" maxlength="5000"></textarea>
+                <div class="bio-counter"><span id="bio-counter">0</span>/5000</div>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-venus-mars"></i>
+                    الجنس
+                </label>
+                <div class="gender-options">
+                    <label class="gender-option">
+                        <input type="radio" name="gender" value="male" checked disabled>
+                        ذكر
+                    </label>
+                    <label class="gender-option">
+                        <input type="radio" name="gender" value="female" disabled>
+                        أنثى
+                    </label>
+                </div>
+                <span class="gender-change-link" onclick="window.location.href='7account_general_Settings.html'">
+                    لتغيير الجنس، يرجى الذهاب إلى صفحة الإعدادات الرئيسية
+                </span>
+            </div>
+            
+            <button type="submit" class="save-btn" id="save-btn" disabled>حفظ التغييرات</button>
+        </form>
+    </div>
+
+    <script>
+        // نظام إدارة الحسابات مع الرموز الفريدة
+        class AccountSystem {
+            constructor() {
+                // تحميل بيانات الحساب من localStorage أو إنشاء حساب جديد
+                this.loadAccount();
+                
+                // إذا لم يكن هناك حساب، ننشئ واحد جديد
+                if (!this.account) {
+                    this.createNewAccount();
+                }
+            }
+            
+            loadAccount() {
+                const accountData = localStorage.getItem('userAccount');
+                if (accountData) {
+                    this.account = JSON.parse(accountData);
+                }
+            }
+            
+            saveAccount() {
+                localStorage.setItem('userAccount', JSON.stringify(this.account));
+            }
+            
+            createNewAccount() {
+                // إنشاء رمز عام فريد (من 000000001# إلى 999999999#)
+                const publicCode = this.generatePublicCode();
+                
+                // إنشاء رمز سري فريد
+                const secretCode = this.generateSecretCode();
+                
+                // إنشاء رمز القفل الافتراضي (يمكن للمستخدم تغييره لاحقاً)
+                const lockCode = '1234'; // يمكنك تغييره إلى أي قيمة افتراضية
+                
+                // تاريخ ووقت إنشاء الحساب
+                const creationDate = new Date();
+                
+                this.account = {
+                    username: '',
+                    publicRQ: publicCode,
+                    secretRQ: secretCode,
+                    lockCode: lockCode,
+                    creationDate: creationDate,
+                    profilePic: 'storage/emulated/0/Eleanor Camelot Brand/Files/Photo/Profile_picture.jpg',
+                    bio: '',
+                    gender: 'male'
+                };
+                
+                this.saveAccount();
+            }
+            
+            generatePublicCode() {
+                // توليد رقم عشوائي بين 1 و 999999999
+                const randomNum = Math.floor(Math.random() * 999999999) + 1;
+                
+                // تحويل الرقم إلى سلسلة مع أصفار أمامية
+                const paddedNum = randomNum.toString().padStart(9, '0');
+                
+                return `${paddedNum}#`;
+            }
+            
+            generateSecretCode() {
+                // توليد رمز سري فريد يحتوي على حروف وأرقام
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                const length = 16;
+                let result = 'RQ-';
+                
+                for (let i = 0; i < length; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                
+                return result;
+            }
+            
+            verifyLockCode(code) {
+                return code === this.account.lockCode;
+            }
+            
+            updateLockCode(newCode) {
+                this.account.lockCode = newCode;
+                this.saveAccount();
+            }
+            
+            updateUsername(newUsername) {
+                this.account.username = newUsername;
+                this.saveAccount();
+            }
+            
+            updateBio(newBio) {
+                this.account.bio = newBio;
+                this.saveAccount();
+            }
+            
+            updateProfilePic(newPic) {
+                this.account.profilePic = newPic;
+                this.saveAccount();
+            }
+            
+            getAccountInfo() {
+                return this.account;
+            }
+        }
+        
+        // إنشاء مثيل لنظام الحسابات
+        const accountSystem = new AccountSystem();
+        const accountInfo = accountSystem.getAccountInfo();
+        
+        // قائمة بأسماء المستخدمين المحجوزة (لأغراض العرض فقط)
+        const reservedUsernames = ['محمد', 'أحمد', 'علي', 'خالد', 'user123'];
+        
+        // عناصر DOM
+        const usernameInput = document.getElementById('username');
+        const saveBtn = document.getElementById('save-btn');
+        const lengthMessage = document.getElementById('length-message');
+        const charsMessage = document.getElementById('chars-message');
+        const uniqueMessage = document.getElementById('unique-message');
+        const lengthIcon = document.getElementById('length-icon');
+        const charsIcon = document.getElementById('chars-icon');
+        const uniqueIcon = document.getElementById('unique-icon');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const editForm = document.getElementById('edit-profile-form');
+        const profilePic = document.getElementById('profile-pic');
+        const accountCreationDate = document.getElementById('account-creation-date');
+        const publicRQCode = document.getElementById('public-rq-code');
+        const secretRQCode = document.getElementById('secret-rq-code');
+        const secretRQPlaceholder = document.getElementById('secret-rq-placeholder');
+        const showSecretBtn = document.getElementById('showSecretBtn');
+        const lockScreen = document.getElementById('lockScreen');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const lockCodeInput = document.getElementById('lockCode');
+        const lockError = document.getElementById('lockError');
+        const lockBackBtn = document.getElementById('lockBackBtn');
+        const lockChangeBtn = document.getElementById('lockChangeBtn');
+        const changeCodeScreen = document.getElementById('changeCodeScreen');
+        const currentCodeInput = document.getElementById('currentCode');
+        const newCodeInput = document.getElementById('newCode');
+        const confirmNewCodeInput = document.getElementById('confirmNewCode');
+        const changeCodeBtn = document.getElementById('changeCodeBtn');
+        const changeCodeError = document.getElementById('changeCodeError');
+        const changeCodeBackBtn = document.getElementById('changeCodeBackBtn');
+        
+        // حالات التحقق
+        let isLengthValid = false;
+        let isCharsValid = false;
+        let isUniqueValid = false;
+        
+        // تهيئة واجهة المستخدم ببيانات الحساب
+        function initializeUI() {
+            // تعيين تاريخ إنشاء الحساب مع الوقت الدقيق
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            
+            const formattedDate = accountInfo.creationDate.toLocaleString('ar-EG', options);
+            accountCreationDate.textContent = formattedDate;
+            
+            // تعيين الرموز
+            publicRQCode.textContent = accountInfo.publicRQ;
+            secretRQCode.textContent = accountInfo.secretRQ;
+            
+            // تعيين اسم المستخدم إذا كان موجوداً
+            if (accountInfo.username) {
+                usernameInput.value = accountInfo.username;
+                usernameInput.dispatchEvent(new Event('input'));
+            }
+            
+            // تعيين البايو إذا كان موجوداً
+            if (accountInfo.bio) {
+                document.getElementById('bio').value = accountInfo.bio;
+                document.getElementById('bio-counter').textContent = accountInfo.bio.length;
+            }
+            
+            // تعيين صورة الملف الشخصي
+            profilePic.src = accountInfo.profilePic;
+        }
+        
+        // استدعاء الدالة عند تحميل الصفحة
+        initializeUI();
+        
+        // عداد حروف البايو
+        document.getElementById('bio').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('bio-counter').textContent = count;
+        });
+        
+        // التحقق من اسم المستخدم
+        usernameInput.addEventListener('input', function() {
+            const username = this.value.trim();
+            
+            // التحقق من الطول (5 أحرف على الأقل)
+            isLengthValid = username.length >= 5;
+            updateValidation(lengthMessage, lengthIcon, isLengthValid, 
+                          'اسم مكون من خمسة أحرف أو أكثر');
+            
+            // التحقق من الأحرف المسموحة (لا مسافات أو نقاط، يسمح ب_)
+            const validChars = /^[a-zA-Z0-9_\u0600-\u06FF]+$/;
+            isCharsValid = validChars.test(username) && 
+                         !username.includes(' ') && 
+                         !username.includes('.');
+            updateValidation(charsMessage, charsIcon, isCharsValid,
+                          'اسم لا يحتوي على مساحات أو نقاط (يسمح باستعمال "_")');
+            
+            // التحقق من التكرار (غير مستخدم من قبل)
+            isUniqueValid = !reservedUsernames.includes(username.toLowerCase());
+            updateValidation(uniqueMessage, uniqueIcon, isUniqueValid,
+                          'اسم المستخدم متاح');
+            
+            // تفعيل/تعطيل زر الحفظ
+            saveBtn.disabled = !(isLengthValid && isCharsValid && isUniqueValid);
+        });
+        
+        // دالة لتحديث رسائل التحقق
+        function updateValidation(element, icon, isValid, message) {
+            if (isValid) {
+                element.classList.remove('invalid');
+                element.classList.add('valid');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-check');
+                icon.classList.remove('invalid');
+                icon.classList.add('valid');
+            } else {
+                element.classList.remove('valid');
+                element.classList.add('invalid');
+                icon.classList.remove('fa-check');
+                icon.classList.add('fa-times');
+                icon.classList.remove('valid');
+                icon.classList.add('invalid');
+            }
+            element.querySelector('span').textContent = message;
+        }
+        
+        // تغيير صورة الملف الشخصي
+        document.querySelector('.profile-pic-container').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        profilePic.src = event.target.result;
+                        // تحديث صورة الملف الشخصي في نظام الحسابات
+                        accountSystem.updateProfilePic(event.target.result);
+                        // إخفاء الرمز السري عند تغيير الصورة
+                        hideSecretCode();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            input.click();
+        });
+        
+        // إرسال النموذج
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!isLengthValid || !isCharsValid || !isUniqueValid) {
+                alert('الرجاء إدخال اسم مستخدم صحيح قبل الحفظ');
+                return;
+            }
+            
+            // عرض شاشة التحميل
+            loadingScreen.style.display = 'flex';
+            
+            // حفظ البيانات في نظام الحسابات
+            accountSystem.updateUsername(usernameInput.value.trim());
+            accountSystem.updateBio(document.getElementById('bio').value);
+            
+            // محاكاة عملية الحفظ (2 ثانية)
+            setTimeout(function() {
+                // إخفاء الرمز السري قبل الانتقال
+                hideSecretCode();
+                // الانتقال إلى صفحة الحساب
+                window.location.href = '7account.html';
+            }, 2000);
+        });
+        
+        // دالة لإخفاء الرمز السري
+        function hideSecretCode() {
+            secretRQPlaceholder.style.display = 'inline';
+            secretRQCode.style.display = 'none';
+            showSecretBtn.textContent = 'عرض الرمز السري';
+            showSecretBtn.onclick = function() {
+                lockScreen.style.display = 'flex';
+            };
+        }
+        
+        // عرض الرمز السري
+        showSecretBtn.addEventListener('click', function() {
+            lockScreen.style.display = 'flex';
+        });
+        
+        // فتح القفل
+        unlockBtn.addEventListener('click', function() {
+            const enteredCode = lockCodeInput.value;
+            
+            if (accountSystem.verifyLockCode(enteredCode)) {
+                // إخفاء شاشة القفل
+                lockScreen.style.display = 'none';
+                
+                // عرض الرمز السري
+                secretRQPlaceholder.style.display = 'none';
+                secretRQCode.style.display = 'inline';
+                
+                // تغيير نص الزر
+                showSecretBtn.textContent = 'إخفاء الرمز السري';
+                
+                // تغيير وظيفة الزر لإخفاء الرمز
+                showSecretBtn.onclick = function() {
+                    hideSecretCode();
+                };
+            } else {
+                // عرض رسالة الخطأ
+                lockError.style.display = 'block';
+            }
+        });
+        
+        // إخفاء رسالة الخطأ عند البدء بكتابة رمز جديد
+        lockCodeInput.addEventListener('input', function() {
+            lockError.style.display = 'none';
+        });
+        
+        // زر الرجوع في شاشة القفل
+        lockBackBtn.addEventListener('click', function() {
+            lockScreen.style.display = 'none';
+        });
+        
+        // زر تغيير الرمز في شاشة القفل
+        lockChangeBtn.addEventListener('click', function() {
+            lockScreen.style.display = 'none';
+            changeCodeScreen.style.display = 'flex';
+        });
+        
+        // زر الرجوع في شاشة تغيير الرمز
+        changeCodeBackBtn.addEventListener('click', function() {
+            changeCodeScreen.style.display = 'none';
+            lockScreen.style.display = 'flex';
+        });
+        
+        // تغيير رمز القفل
+        changeCodeBtn.addEventListener('click', function() {
+            const currentCode = currentCodeInput.value;
+            const newCode = newCodeInput.value;
+            const confirmNewCode = confirmNewCodeInput.value;
+            
+            if (!accountSystem.verifyLockCode(currentCode)) {
+                changeCodeError.textContent = 'رمز القفل الحالي غير صحيح!';
+                changeCodeError.style.display = 'block';
+                return;
+            }
+            
+            if (newCode.length < 4) {
+                changeCodeError.textContent = 'يجب أن يتكون رمز القفل من 4 أحرف على الأقل!';
+                changeCodeError.style.display = 'block';
+                return;
+            }
+            
+            if (newCode !== confirmNewCode) {
+                changeCodeError.textContent = 'الرمز الجديد وتأكيد الرمز غير متطابقين!';
+                changeCodeError.style.display = 'block';
+                return;
+            }
+            
+            // تغيير رمز القفل
+            accountSystem.updateLockCode(newCode);
+            
+            // إخفاء شاشة التغيير
+            changeCodeScreen.style.display = 'none';
+            
+            // مسح الحقول
+            currentCodeInput.value = '';
+            newCodeInput.value = '';
+            confirmNewCodeInput.value = '';
+            changeCodeError.style.display = 'none';
+            
+            // عرض رسالة نجاح
+            alert('تم تغيير رمز القفل بنجاح!');
+        });
+        
+        // إخفاء الرمز السري عند مغادرة الصفحة
+        window.addEventListener('beforeunload', function() {
+            hideSecretCode();
+        });
+     </script>
+</body>
+</html>

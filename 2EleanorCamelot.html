@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eleanor Camelot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Cormorant+Garamond:wght@400;500;600&family=Tajawal:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --gold: #d4af37;
+            --dark: #222222;
+            --light: #f8f8f8;
+            --text: #333333;
+            --white: #ffffff;
+            --transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--light);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        /* Header Styles */
+        .luxury-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            padding: 20px 0;
+            transition: var(--transition);
+        }
+        
+        .luxury-header.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            letter-spacing: 3px;
+            color: var(--white);
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: var(--transition);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                        url('https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            padding: 0 20px;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s forwards 0.5s;
+        }
+        
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .enter-btn {
+            background-color: var(--white);
+            color: var(--dark);
+            border: none;
+            padding: 15px 40px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .enter-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .enter-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .enter-btn:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.3) 50%, transparent 75%);
+            background-size: 400% 400%;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .enter-btn:hover:after {
+            opacity: 1;
+            animation: shine 2s infinite;
+        }
+        
+        /* Brand Story Section */
+        .section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--dark);
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: var(--gold);
+            margin: 15px auto;
+        }
+        
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .story-card {
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .story-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .story-card:nth-child(1) { transition-delay: 0.1s; }
+        .story-card:nth-child(2) { transition-delay: 0.2s; }
+        .story-card:nth-child(3) { transition-delay: 0.3s; }
+        
+        .story-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .story-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .story-content {
+            padding: 25px;
+        }
+        
+        .story-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .story-text {
+            line-height: 1.7;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+        
+        /* Collections Section */
+        .collections {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .collection-item {
+            position: relative;
+            height: 350px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: var(--transition);
+        }
+        
+        .collection-item:hover {
+            transform: scale(1.03);
+        }
+        
+        .collection-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        
+        .collection-item:hover .collection-img {
+            transform: scale(1.1);
+        }
+        
+        .collection-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            padding: 30px 20px;
+            text-align: right;
+        }
+        
+        .collection-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Philosophy Section */
+        .philosophy {
+            background-color: var(--white);
+            padding: 80px 20px;
+        }
+        
+        .philosophy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .philosophy-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin: 40px 0;
+            position: relative;
+            padding: 0 20px;
+        }
+        
+        .philosophy-quote:before,
+        .philosophy-quote:after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--gold);
+            position: absolute;
+            opacity: 0.5;
+        }
+        
+        .philosophy-quote:before {
+            top: -20px;
+            left: 0;
+        }
+        
+        .philosophy-quote:after {
+            bottom: -40px;
+            right: 0;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: var(--white);
+            padding: 60px 20px 30px;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .social-link {
+            color: var(--white);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            color: var(--gold);
+            transform: translateY(-3px);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-link:hover {
+            color: var(--gold);
+        }
+        
+        .copyright {
+            margin-top: 30px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--white);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(0,0,0,0.1);
+            border-top: 5px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--dark);
+            letter-spacing: 2px;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes buttonClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .enter-btn {
+                padding: 12px 30px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Eleanor Camelot</div>
+    </div>
+    
+    <!-- Header -->
+    <header class="luxury-header" id="luxuryHeader">
+        <div class="brand-name">Eleanot Camelot</div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">إعادة تعريف الفخامة</h1>
+            <p class="hero-subtitle">إيلينور كاميلوت ليست مجرد علامة تجارية للأزياء، بل هي قصة تُحاك بخيوط التاريخ والحداثة، حيث تلتقي الأناقة بالجرأة في كل تفصيل</p>
+            <button class="enter-btn" id="enterButton" onclick="window.location.href='3Home.html'">OPEN</button>
+        </div>
+    </section>
+    
+    <!-- Brand Story Section -->
+    <section class="section">
+        <h2 class="section-title">قصة العلامة</h2>
+        
+        <div class="story-grid">
+            <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="إلهام ملكي" class="story-img">
+                <div class="story-content">
+                    <h3 class="story-title">إلهام ملكي</h3>
+                    <p class="story-text">اسم "إليانور" مستوحى من إليانور آكيتان، الملكة التي حكمت فرنسا وإنجلترا في العصور الوسطى، المعروفة بجرأتها في تحديث الموضة الملكية وإدخال الألوان الزاهية والحرير إلى أوروبا.</p>
+                </div>
+            </div>
+            
+            <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="إرث كاميلوت" class="story-img">
+                <div class="story-content">
+                    <h3 class="story-title">إرث كاميلوت</h3>
+                    <p class="story-text">"كاميلوت" المدينة الأسطورية للملك آرثر حيث الفرسان يرتدون الدروع المذهبة بأسلوب يخلط بين القوة والجمال، وكل تفصيلة تُصنع يدويًا كتحفة فنية.</p>
+                </div>
+            </div>
+            
+            <div class="story-card">
+                <img src="https://images.unsplash.com/photo-1554412933-514a83d2f3c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="رؤية معاصرة" class="story-img">
+                <div class="story-content">
+                    <h3 class="story-title">رؤية معاصرة</h3>
+                    <p class="story-text">جمعنا بين الإرث التاريخي والرؤية المعاصرة لخلق علامة تجارية تعيد تعريف الفخامة من خلال القصص والتفاصيل التي تتحدث عن الروح لا السعر.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Collections Section -->
+    <section class="collections">
+        <h2 class="section-title" style="color: var(--white);">مجموعاتنا</h2>
+        <p style="max-width: 800px; margin: 0 auto 40px; line-height: 1.7;">كل مجموعة تحمل سردًا تاريخيًا فريدًا، مصممة بعناية لتجسد قصة من الماضي بأسلوب معاصر</p>
+        
+        <div class="collection-grid">
+            <div class="collection-item">
+                <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="المجموعة الكلاسيكية" class="collection-img">
+                <div class="collection-overlay">
+                    <h3 class="collection-name">المجموعة الكلاسيكية</h3>
+                    <p>إعادة تصور الأناقة الملكية</p>
+                </div>
+            </div>
+            
+            <div class="collection-item">
+                <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="المجموعة العصرية" class="collection-img">
+                <div class="collection-overlay">
+                    <h3 class="collection-name">المجموعة العصرية</h3>
+                    <p>جرأة معاصرة بإلهام تاريخي</p>
+                </div>
+            </div>
+            
+            <div class="collection-item">
+                <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="الإكسسوارات" class="collection-img">
+                <div class="collection-overlay">
+                    <h3 class="collection-name">الإكسسوارات</h3>
+                    <p>لمسات نهائية تكمّل الرواية</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Philosophy Section -->
+    <section class="philosophy">
+        <h2 class="section-title">فلسفتنا</h2>
+        
+        <div class="philosophy-content">
+            <p class="philosophy-quote"> الموضة الحقيقية تُولد من رحم القصص </p>
+            
+            <p>في إيلينور كاميلوت، نؤمن بأن الملابس ليست مجرد قطع قماش، بل هي وسيلة للتعبير عن الذات وتحكي قصصًا عن هويتنا وتاريخنا. كل تصميم يحمل في طياته قصة من الماضي، معاد صياغتها بلغة معاصرة.</p>
+            
+            <p>الرفاهية عندنا لا تقاس بالسعر، بل بالتفاصيل التي لا تراها العين فحسب، بل تشعر بها الروح. من خيوط النسيج إلى الغرز اليدوية، كل عنصر في تصاميمنا يحمل جزءًا من فلسفتنا.</p>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">Eleanor Camelot</div>
+        
+        <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fas fa-globe"></i></a>
+        </div>
+        
+        <div class="footer-links">
+            <a href="#" class="footer-link">عن العلامة</a>
+            <a href="#" class="footer-link">المجموعات</a>
+            <a href="#" class="footer-link">المتاجر</a>
+            <a href="#" class="footer-link">الخصوصية</a>
+            <a href="#" class="footer-link">الشروط</a>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 إيلينور كاميلوت. جميع الحقوق محفوظة.
+        </div>
+    </footer>
+
+    <script>
+        // Hide loading overlay after page loads
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loadingOverlay').style.opacity = '0';
+                setTimeout(function() {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 500);
+            }, 1500);
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('luxuryHeader');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Animate story cards when they come into view
+        const storyCards = document.querySelectorAll('.story-card');
+        
+        function checkVisibility() {
+            storyCards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const isVisible = (rect.top <= window.innerHeight * 0.8);
+                
+                if (isVisible) {
+                    card.classList.add('visible');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkVisibility);
+        window.addEventListener('load', checkVisibility);
+    </script>
+</body>
+</html>

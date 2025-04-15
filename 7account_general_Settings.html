@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - الإعدادات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+            --blue: #2980b9;
+        }
+        
+        /* ألوان الوضع الليلي */
+        .dark-mode {
+            --primary: #f5f5f5;
+            --gray: #222222;
+            --dark-gray: #444444;
+            --text: #ffffff;
+            --white: #121212;
+            --top-bar: #121212;
+            --section-title: #f5f5f5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-top: 60px;
+            min-height: 100vh;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff; /* تغيير اللون إلى أبيض */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: #ffffff; /* تغيير اللون إلى أبيض */
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* محتوى الصفحة */
+        .settings-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--section-title);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .settings-menu {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .settings-menu li {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .settings-menu li:hover {
+            background-color: var(--gray);
+        }
+        
+        .settings-menu li:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+        
+        .menu-text {
+            flex: 1;
+            color: var(--text);
+        }
+        
+        .menu-value {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .menu-arrow {
+            color: var(--dark-gray);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .danger-item {
+            color: var(--red);
+        }
+        
+        .danger-item .menu-icon,
+        .danger-item .menu-text,
+        .danger-item .menu-arrow {
+            color: var(--red);
+        }
+        
+        .info-note {
+            background-color: var(--gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        /* إضافة هذه القاعدة للحفاظ على اللون الأبيض في الوضع الليلي */
+        .dark-mode .top-bar,
+        .dark-mode .back-btn {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي مع زر الرجوع -->
+    <div class="top-bar">
+        <div class="back-btn" onclick="navigateTo('7account.html')">‹</div>
+        <div class="app-title">الإعدادات</div>
+        <div></div>
+    </div>
+    
+    <!-- محتوى الصفحة -->
+    <div class="settings-container">
+        <h3 class="section-title">
+            <i class="fas fa-sliders-h"></i>
+            <span>الإعدادات العامة</span>
+        </h3>
+        
+        <ul class="settings-menu">
+            <!-- اللغة -->
+            <li onclick="navigateTo('settings_language.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <div class="menu-text">اللغة</div>
+                    <div class="menu-value">العربية</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <!-- الإشعارات -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="menu-text">الإشعارات</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- الوضع الليلي -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <div class="menu-text">الوضع الليلي</div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- جودة الصور -->
+            <li onclick="navigateTo('settings_quality.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="menu-text">جودة الصور</div>
+                    <div class="menu-value">عالية</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <!-- التخزين المؤقت -->
+            <li onclick="clearCache()">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-broom"></i>
+                    </div>
+                    <div class="menu-text">مسح الذاكرة المؤقتة</div>
+                    <div class="menu-value">12.5 MB</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <!-- سياسة الخصوصية -->
+            <li onclick="navigateTo('privacy_policy.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="menu-text">سياسة الخصوصية</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <!-- شروط الاستخدام -->
+            <li onclick="navigateTo('terms.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="menu-text">شروط الاستخدام</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <!-- حول التطبيق -->
+            <li onclick="navigateTo('about.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="menu-text">حول التطبيق</div>
+                    <div class="menu-value">الإصدار 1.2.3</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <!-- حذف الحساب -->
+            <li class="danger-item" onclick="showDeleteConfirmation()">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="menu-text">حذف الحساب</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+        </ul>
+        
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> ملاحظة: بعض التغييرات قد تتطلب إعادة تشغيل التطبيق لتصبح فعالة.
+        </div>
+    </div>
+
+    <script>
+        // دالة للانتقال إلى صفحة مع عرض شاشة التحميل
+        function navigateTo(page) {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 1000);
+        }
+        
+        // دالة مسح الذاكرة المؤقتة
+        function clearCache() {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            loadingScreen.querySelector('.loading-text').textContent = 'جاري مسح الذاكرة المؤقتة...';
+            
+            setTimeout(() => {
+                alert('تم مسح الذاكرة المؤقتة بنجاح');
+                loadingScreen.style.display = 'none';
+                
+                // تحديث حجم الذاكرة المؤقتة المعروض
+                document.querySelectorAll('.menu-value')[3].textContent = '0 MB';
+            }, 1500);
+        }
+        
+        // دالة تأكيد حذف الحساب
+        function showDeleteConfirmation() {
+            if (confirm('هل أنت متأكد أنك تريد حذف حسابك؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+                const loadingScreen = document.querySelector('.loading-screen');
+                loadingScreen.style.display = 'flex';
+                loadingScreen.querySelector('.loading-text').textContent = 'جاري حذف الحساب...';
+                
+                setTimeout(() => {
+                    alert('تم حذف حسابك بنجاح');
+                    window.location.href = 'login.html';
+                }, 2000);
+            }
+        }
+        
+        // تبديل الوضع الليلي
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        
+        darkModeToggle.addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode', this.checked);
+            localStorage.setItem('darkMode', this.checked);
+            
+            // تغيير لون شريط العنوان حسب الوضع
+            const topBar = document.querySelector('.top-bar');
+            if (this.checked) {
+                topBar.style.backgroundColor = '#121212';
+                topBar.style.color = '#ffffff'; /* الحفاظ على اللون الأبيض */
+            } else {
+                topBar.style.backgroundColor = '#222222';
+                topBar.style.color = '#ffffff'; /* الحفاظ على اللون الأبيض */
+            }
+        });
+        
+        // تحميل تفضيل الوضع الليلي إذا كان محفوظاً
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.checked = true;
+                
+                // تطبيق لون شريط العنوان عند التحميل
+                const topBar = document.querySelector('.top-bar');
+                topBar.style.backgroundColor = '#121212';
+                topBar.style.color = '#ffffff'; /* الحفاظ على اللون الأبيض */
+            }
+        });
+    </script>
+</body>
+</html>

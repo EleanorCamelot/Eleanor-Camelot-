@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - تعليمات الخصوصية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+            --blue: #2980b9;
+            --green: #27ae60;
+            --purple: #8e44ad;
+        }
+        
+        /* ألوان الوضع الليلي */
+        .dark-mode {
+            --primary: #f5f5f5;
+            --gray: #222222;
+            --dark-gray: #444444;
+            --text: #ffffff;
+            --white: #121212;
+            --top-bar: #121212;
+            --section-title: #f5f5f5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-top: 60px;
+            min-height: 100vh;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: #ffffff;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* محتوى الصفحة */
+        .privacy-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--section-title);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .privacy-content {
+            margin-top: 20px;
+        }
+        
+        .privacy-section {
+            margin-bottom: 25px;
+        }
+        
+        .privacy-section h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .privacy-section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .privacy-list {
+            padding-right: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .privacy-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .info-note {
+            background-color: var(--gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        
+        .settings-menu {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .settings-menu li {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .settings-menu li:hover {
+            background-color: var(--gray);
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+        
+        .menu-text {
+            flex: 1;
+            color: var(--text);
+        }
+        
+        .menu-arrow {
+            color: var(--dark-gray);
+        }
+        
+        .privacy-icon {
+            color: var(--purple);
+        }
+        
+        /* إضافة هذه القاعدة للحفاظ على اللون الأبيض في الوضع الليلي */
+        .dark-mode .top-bar,
+        .dark-mode .back-btn {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي مع زر الرجوع -->
+    <div class="top-bar">
+        <div class="back-btn" onclick="navigateTo('7account.html')">‹</div>
+        <div class="app-title">تعليمات الخصوصية</div>
+        <div></div>
+    </div>
+    
+    <!-- محتوى الصفحة -->
+    <div class="privacy-container">
+        <h3 class="section-title">
+            <i class="fas fa-user-shield privacy-icon"></i>
+            <span>حماية بياناتك الشخصية</span>
+        </h3>
+        
+        <div class="privacy-content">
+            <div class="privacy-section">
+                <h3><i class="fas fa-info-circle"></i> مقدمة</h3>
+                <p>
+                    نحن في إيلينور كاميلوت نعتبر خصوصيتك أمرًا بالغ الأهمية. تشرح هذه السياسة كيفية جمعنا واستخدامنا وحماية معلوماتك الشخصية عند استخدامك لتطبيقنا. باستخدامك للتطبيق، فإنك توافق على ممارسات الخصوصية الموصوفة في هذه الوثيقة.
+                </p>
+            </div>
+            
+            <div class="privacy-section">
+                <h3><i class="fas fa-database"></i> المعلومات التي نجمعها</h3>
+                <p>قد نجمع الأنواع التالية من المعلومات:</p>
+                <ul class="privacy-list">
+                    <li>معلومات التسجيل (الاسم، البريد الإلكتروني، رقم الهاتف)</li>
+                    <li>بيانات الاستخدام (كيفية تفاعلك مع التطبيق)</li>
+                    <li>معلومات الجهاز (نوع الجهاز، نظام التشغيل، المعرف الفريد)</li>
+                    <li>بيانات الموقع (إذا سمحت بالإذن)</li>
+                    <li>المعلومات التي تقدمها عند التواصل مع الدعم الفني</li>
+                </ul>
+            </div>
+            
+            <div class="privacy-section">
+                <h3><i class="fas fa-lock"></i> كيف نستخدم معلوماتك</h3>
+                <p>نستخدم البيانات التي نجمعها لأغراض متعددة تشمل:</p>
+                <ul class="privacy-list">
+                    <li>توفير الخدمات المطلوبة وتشغيل التطبيق</li>
+                    <li>تحسين تجربة المستخدم وتطوير ميزات جديدة</li>
+                    <li>الرد على استفساراتك وطلبات الدعم</li>
+                    <li>إرسال تحديثات وإشعارات مهمة</li>
+                    <li>تحليل استخدام التطبيق لأغراض التحسين</li>
+                    <li>منع الاحتيال وإساءة الاستخدام</li>
+                </ul>
+            </div>
+            
+            <div class="privacy-section">
+                <h3><i class="fas fa-shield-alt"></i> حماية البيانات</h3>
+                <p>
+                    نستخدم تدابير أمنية فنية وإدارية متعددة لحماية معلوماتك الشخصية من الوصول غير المصرح به أو التغيير أو الكشف أو التدمير. تشمل هذه التدابير التشفير، وضوابط الوصول، وجدران الحماية، والتقييمات الأمنية المنتظمة.
+                </p>
+                <p>
+                    ومع ذلك، لا يوجد نظام آمن بنسبة 100٪، لذلك لا يمكننا ضمان الأمان المطلق لبياناتك. نوصيك بعدم مشاركة معلومات تسجيل الدخول الخاصة بك مع أي شخص واستخدام كلمات مرور قوية.
+                </p>
+            </div>
+            
+            <div class="privacy-section">
+                <h3><i class="fas fa-exchange-alt"></i> مشاركة البيانات مع أطراف ثالثة</h3>
+                <p>
+                    لا نبيع معلوماتك الشخصية لأطراف ثالثة. ومع ذلك، قد نشارك بيانات محدودة مع:
+                </p>
+                <ul class="privacy-list">
+                    <li>مزودي الخدمات الذين يساعدوننا في تشغيل التطبيق (مع التزامهم بسرية البيانات)</li>
+                    <li>السلطات القانونية عند الالتزام بالقوانين واللوائح</li>
+                    <li>في حالة اندماج أو استحواذ على الشركة</li>
+                </ul>
+            </div>
+            
+            <div class="privacy-section">
+                <h3><i class="fas fa-cookie"></i> ملفات تعريف الارتباط والتقنيات المماثلة</h3>
+                <p>
+                    نستخدم ملفات تعريف الارتباط والتقنيات المماثلة لتحسين تجربتك، وتحليل استخدام التطبيق، وتخصيص المحتوى. يمكنك التحكم في ملفات تعريف الارتباط من خلال إعدادات المتصفح، ولكن تعطيلها قد يؤثر على بعض وظائف التطبيق.
+                </p>
+            </div>
+        </div>
+        
+        <h3 class="section-title" style="margin-top: 30px;">
+            <i class="fas fa-user-cog"></i>
+            <span>التحكم في بياناتك</span>
+        </h3>
+        
+        <ul class="settings-menu">
+            <li onclick="navigateTo('privacy_settings.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <div class="menu-text">إعدادات الخصوصية</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <li onclick="navigateTo('export_data.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <div class="menu-text">تصدير بياناتي</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <li onclick="navigateTo('delete_data.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <div class="menu-text">حذف بياناتي</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+        </ul>
+        
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> ملاحظة: قد يتم تحديث سياسة الخصوصية هذه من وقت لآخر. نوصيك بمراجعتها بانتظام. سيتم إعلامك بأي تغييرات جوهرية.
+        </div>
+    </div>
+
+    <script>
+        // دالة للانتقال إلى صفحة مع عرض شاشة التحميل
+        function navigateTo(page) {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 1000);
+        }
+        
+        // تبديل الوضع الليلي
+        const darkModeToggle = document.createElement('input');
+        darkModeToggle.type = 'checkbox';
+        darkModeToggle.id = 'darkModeToggle';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                
+                // تطبيق لون شريط العنوان عند التحميل
+                const topBar = document.querySelector('.top-bar');
+                topBar.style.backgroundColor = '#121212';
+                topBar.style.color = '#ffffff';
+            }
+        });
+    </script>
+</body>
+</html>

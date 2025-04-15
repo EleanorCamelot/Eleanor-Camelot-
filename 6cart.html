@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - سلة التسوق</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #8e44ad;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-bottom: 80px;
+            padding-top: 60px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* المحتوى الرئيسي */
+        .main-content {
+            padding: 20px;
+            transition: opacity 0.3s ease;
+        }
+        
+        .main-content.fade-out {
+            opacity: 0;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        /* عناصر السلة */
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid var(--dark-gray);
+            position: relative;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .cart-item:hover {
+            background-color: var(--gray);
+        }
+        
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-details h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+            font-size: 16px;
+        }
+        
+        .item-details p {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .quantity-controls button {
+            width: 25px;
+            height: 25px;
+            border: 1px solid var(--dark-gray);
+            background: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .quantity-controls button:hover {
+            background-color: var(--dark-gray);
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: var(--red);
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .remove-item:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+        
+        /* ملخص السلة */
+        .cart-summary {
+            background: var(--gray);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+            font-size: 14px;
+        }
+        
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            margin: 15px 0;
+            border-top: 1px solid var(--dark-gray);
+            padding-top: 15px;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .checkout-btn:hover {
+            background-color: #7d3c98;
+        }
+        
+        /* القائمة السفلية */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid var(--dark-gray);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
+            transition: color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .nav-item i {
+            font-size: 18px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        /* رسالة السلة الفارغة */
+        .empty-cart {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text);
+        }
+        
+        .empty-cart-icon {
+            font-size: 50px;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="app-title">إيلينور كاميلوت</div>
+        <div>سلة التسوق</div>
+    </div>
+    
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content" id="main-content">
+        <h2 class="page-title"><i class="fas fa-shopping-cart"></i> سلة التسوق</h2>
+        
+        <div class="cart-items">
+            <!-- العنصر 1 -->
+            <div class="cart-item">
+                <img src="cart1.jpg" alt="قميص رسمي">
+                <div class="item-details">
+                    <h4>قميص رسمي</h4>
+                    <p>120 ر.س</p>
+                    <div class="quantity-controls">
+                        <button><i class="fas fa-minus"></i></button>
+                        <span>1</span>
+                        <button><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <button class="remove-item"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <!-- العنصر 2 -->
+            <div class="cart-item">
+                <img src="cart2.jpg" alt="حذاء رياضي">
+                <div class="item-details">
+                    <h4>حذاء رياضي</h4>
+                    <p>250 ر.س</p>
+                    <div class="quantity-controls">
+                        <button><i class="fas fa-minus"></i></button>
+                        <span>2</span>
+                        <button><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <button class="remove-item"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <!-- العنصر 3 -->
+            <div class="cart-item">
+                <img src="cart3.jpg" alt="ساعة يد">
+                <div class="item-details">
+                    <h4>ساعة يد</h4>
+                    <p>180 ر.س</p>
+                    <div class="quantity-controls">
+                        <button><i class="fas fa-minus"></i></button>
+                        <span>1</span>
+                        <button><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <button class="remove-item"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>المجموع الفرعي</span>
+                <span>550 ر.س</span>
+            </div>
+            <div class="summary-row">
+                <span>التوصيل</span>
+                <span>15 ر.س</span>
+            </div>
+            <div class="summary-row total">
+                <span>المجموع الكلي</span>
+                <span>565 ر.س</span>
+            </div>
+            <button class="checkout-btn">
+                <i class="fas fa-credit-card"></i>
+                <span>إتمام الشراء</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- القائمة السفلية -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item" data-page="3Home.html">
+            <i class="fas fa-home"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item" data-page="4thestore.html">
+            <i class="fas fa-boxes"></i>
+            <span>المتجر</span>
+        </a>
+        <a href="#" class="nav-item" data-page="5Favorites.html">
+            <i class="fas fa-heart"></i>
+            <span>المفضلة</span>
+        </a>
+        <a href="#" class="nav-item active" data-page="6cart.html">
+            <i class="fas fa-shopping-cart"></i>
+            <span>السلة</span>
+        </a>
+        <a href="#" class="nav-item" data-page="7account.html">
+            <i class="fas fa-user"></i>
+            <span>حساب</span>
+        </a>
+    </nav>
+
+    <script>
+        // متغير لتخزين الصفحة الحالية
+        let currentPage = '6cart.html';
+        
+        // دالة للانتقال السلس بين الصفحات
+        async function loadPage(page) {
+            if (currentPage === page) return;
+            
+            const loadingScreen = document.querySelector('.loading-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            // إضافة تأثير التلاشي
+            mainContent.classList.add('fade-out');
+            loadingScreen.style.display = 'flex';
+            
+            try {
+                // جلب محتوى الصفحة الجديدة
+                const response = await fetch(page);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const html = await response.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // استخراج المحتوى الرئيسي من الصفحة الجديدة
+                const newContent = tempDiv.querySelector('.main-content') || tempDiv.body;
+                
+                // تحديث المحتوى
+                setTimeout(() => {
+                    mainContent.innerHTML = newContent.innerHTML;
+                    mainContent.classList.remove('fade-out');
+                    loadingScreen.style.display = 'none';
+                    currentPage = page;
+                    
+                    // إعادة ربط الأحداث للعناصر الجديدة
+                    bindEvents();
+                    
+                    // تحديث عنوان الشريط العلوي
+                    const newTitle = tempDiv.querySelector('.top-bar div:last-child').textContent;
+                    document.querySelector('.top-bar div:last-child').textContent = newTitle;
+                    
+                    // تحديث عنوان الصفحة
+                    document.title = tempDiv.querySelector('title').textContent;
+                }, 300);
+                
+                // تحديث تاريخ المتصفح دون إعادة تحميل الصفحة
+                window.history.pushState({ page }, '', page);
+                
+            } catch (error) {
+                console.error('Error loading page:', error);
+                loadingScreen.style.display = 'none';
+                mainContent.classList.remove('fade-out');
+                window.location.href = page; // العودة للطريقة التقليدية في حالة الخطأ
+            }
+        }
+        
+        // دالة لربط الأحداث
+        function bindEvents() {
+            // تفاعل أزرار الكمية
+            document.querySelectorAll('.quantity-controls button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const loadingScreen = document.querySelector('.loading-screen');
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.querySelector('.loading-text').textContent = 'جاري تحديث الكمية...';
+                    
+                    setTimeout(() => {
+                        const quantitySpan = this.parentElement.querySelector('span');
+                        let quantity = parseInt(quantitySpan.textContent);
+                        
+                        if (this.querySelector('.fa-plus') && quantity < 10) {
+                            quantity++;
+                        } else if (this.querySelector('.fa-minus') && quantity > 1) {
+                            quantity--;
+                        }
+                        
+                        quantitySpan.textContent = quantity;
+                        updateCartTotal();
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                });
+            });
+            
+            // تفاعل زر الحذف
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const loadingScreen = document.querySelector('.loading-screen');
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.querySelector('.loading-text').textContent = 'جاري الإزالة من السلة...';
+                    
+                    setTimeout(() => {
+                        if (confirm('هل تريد إزالة هذا المنتج من السلة؟')) {
+                            this.closest('.cart-item').remove();
+                            updateCartTotal();
+                            
+                            // إذا لم يعد هناك عناصر، عرض رسالة السلة الفارغة
+                            if (document.querySelectorAll('.cart-item').length === 0) {
+                                showEmptyCart();
+                            }
+                        }
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                });
+            });
+            
+            // تفاعل زر إتمام الشراء
+            const checkoutBtn = document.querySelector('.checkout-btn');
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', function() {
+                    const loadingScreen = document.querySelector('.loading-screen');
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.querySelector('.loading-text').textContent = 'جاري التوجيه إلى صفحة الدفع...';
+                    
+                    setTimeout(() => {
+                        alert('سيتم توجيهك إلى صفحة الدفع');
+                        loadingScreen.style.display = 'none';
+                    }, 1000);
+                });
+            }
+            
+            // تمييز العنصر النشط في القائمة السفلية
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    
+                    document.querySelectorAll('.nav-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    loadPage(page);
+                });
+            });
+        }
+        
+        // تحديث المجموع الكلي
+        function updateCartTotal() {
+            let subtotal = 0;
+            
+            document.querySelectorAll('.cart-item').forEach(item => {
+                const price = parseFloat(item.querySelector('p').textContent.replace(' ر.س', ''));
+                const quantity = parseInt(item.querySelector('.quantity-controls span').textContent);
+                subtotal += price * quantity;
+            });
+            
+            const delivery = 15;
+            const total = subtotal + delivery;
+            
+            document.querySelectorAll('.summary-row span')[1].textContent = subtotal + ' ر.س';
+            document.querySelectorAll('.summary-row span')[3].textContent = total + ' ر.س';
+        }
+        
+        // عرض رسالة السلة الفارغة
+        function showEmptyCart() {
+            const cartItems = document.querySelector('.cart-items');
+            cartItems.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>سلة التسوق فارغة</h3>
+                    <p>يمكنك تصفح الأقسام وإضافة منتجات إلى السلة</p>
+                </div>
+            `;
+            
+            document.querySelector('.cart-summary').style.display = 'none';
+        }
+        
+        // التعامل مع زر الرجوع في المتصفح
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.page) {
+                loadPage(event.state.page);
+            }
+        });
+        
+        // عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            bindEvents();
+            
+            // تخزين حالة الصفحة الأولى
+            window.history.replaceState({ page: currentPage }, '', currentPage);
+        });
+    </script>
+</body>
+</html>

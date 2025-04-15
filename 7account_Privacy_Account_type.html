@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - نوع الحساب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+            --success: #27ae60;
+            --blue: #2980b9;
+            --orange: #e67e22;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-top: 60px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--white);
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* محتوى الصفحة */
+        .account-type-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--section-title);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .account-types {
+            margin-top: 20px;
+        }
+        
+        .account-type-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--dark-gray);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .account-type-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .account-type-card.selected {
+            border: 2px solid var(--primary);
+            background-color: var(--gray);
+        }
+        
+        .account-type-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .account-type-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            font-size: 18px;
+        }
+        
+        .private .account-type-icon {
+            background-color: #f0f8ff;
+            color: var(--blue);
+        }
+        
+        .public .account-type-icon {
+            background-color: #f0fff0;
+            color: var(--success);
+        }
+        
+        .investor .account-type-icon {
+            background-color: #fff8f0;
+            color: var(--orange);
+        }
+        
+        .account-type-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .account-type-desc {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .selected-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: var(--success);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: none;
+        }
+        
+        .selected .selected-badge {
+            display: block;
+        }
+        
+        .save-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .save-btn:hover {
+            background-color: #111111;
+        }
+        
+        .info-note {
+            background-color: var(--gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي مع زر الرجوع -->
+    <div class="top-bar">
+        <div class="back-btn" onclick="navigateTo('7account.html')">‹</div>
+        <div class="app-title">نوع الحساب</div>
+        <div></div>
+    </div>
+    
+    <!-- محتوى الصفحة -->
+    <div class="account-type-container">
+        <h3 class="section-title">
+            <i class="fas fa-users"></i>
+            <span>اختر نوع حسابك</span>
+        </h3>
+        
+        <div class="account-types">
+            <!-- حساب خاص -->
+            <div class="account-type-card private" onclick="selectAccountType(this, 'private')">
+                <div class="selected-badge">محدد حالياً</div>
+                <div class="account-type-header">
+                    <div class="account-type-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="account-type-title">حساب خاص</div>
+                </div>
+                <div class="account-type-desc">
+                    الحساب الخاص يحمي خصوصيتك الكاملة. لا يمكن لأحد رؤية منشوراتك أو متابعتك إلا بالموافقة المسبقة. مناسب للأفراد الذين يفضلون الخصوصية التامة.
+                </div>
+            </div>
+            
+            <!-- حساب عام -->
+            <div class="account-type-card public" onclick="selectAccountType(this, 'public')">
+                <div class="selected-badge">محدد حالياً</div>
+                <div class="account-type-header">
+                    <div class="account-type-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="account-type-title">حساب عام</div>
+                </div>
+                <div class="account-type-desc">
+                    الحساب العام يسمح للجميع برؤية منشوراتك ومتابعتك دون موافقة مسبقة. مناسب للعلامات التجارية أو الشخصيات العامة.
+                </div>
+            </div>
+            
+            <!-- حساب مستثمر -->
+            <div class="account-type-card investor" onclick="selectAccountType(this, 'investor')">
+                <div class="selected-badge">محدد حالياً</div>
+                <div class="account-type-header">
+                    <div class="account-type-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="account-type-title">حساب مستثمر</div>
+                </div>
+                <div class="account-type-desc">
+                    الحساب الاستثماري يوفر أدوات متقدمة لتحليل السوق وإدارة المحفظة الاستثمارية. يتطلب التحقق من الهوية.
+                </div>
+            </div>
+        </div>
+        
+        <button class="save-btn" onclick="saveAccountType()">
+            <i class="fas fa-save"></i> حفظ التغييرات
+        </button>
+        
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> ملاحظة: يمكنك تغيير نوع حسابك في أي وقت. بعض الميزات قد تتطلب التحقق من الهوية عند التغيير إلى حساب مستثمر.
+        </div>
+    </div>
+
+    <script>
+        // دالة للانتقال إلى صفحة مع عرض شاشة التحميل
+        function navigateTo(page) {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 1000);
+        }
+        
+        // تحديد نوع الحساب
+        let selectedType = 'private'; // القيمة الافتراضية
+        
+        function selectAccountType(element, type) {
+            // إزالة التحديد من جميع البطاقات
+            document.querySelectorAll('.account-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // إضافة التحديد للبطاقة المختارة
+            element.classList.add('selected');
+            selectedType = type;
+        }
+        
+        // حفظ نوع الحساب
+        function saveAccountType() {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            loadingScreen.querySelector('.loading-text').textContent = 'جاري حفظ التغييرات...';
+            
+            // هنا يمكنك إضافة كود الحفظ إلى السيرفر
+            setTimeout(() => {
+                alert(`تم تغيير نوع حسابك إلى ${getTypeName(selectedType)} بنجاح`);
+                loadingScreen.style.display = 'none';
+                
+                // توجيه المستخدم إلى صفحة الحساب بعد الحفظ
+                navigateTo('7account.html');
+            }, 1500);
+        }
+        
+        // تحويل نوع الحساب إلى اسم معروض
+        function getTypeName(type) {
+            const types = {
+                'private': 'حساب خاص',
+                'public': 'حساب عام',
+                'investor': 'حساب مستثمر'
+            };
+            return types[type] || type;
+        }
+        
+        // تحديد النوع الحالي عند تحميل الصفحة (يمكن جلب هذه القيمة من السيرفر)
+        window.onload = function() {
+            // افتراضياً نحدد الحساب الخاص كمحدد
+            document.querySelector('.account-type-card.private').classList.add('selected');
+        };
+    </script>
+</body>
+</html>

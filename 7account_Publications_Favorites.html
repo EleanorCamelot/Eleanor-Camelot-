@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - المنشورات المعجبة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+            --pink: #e84393;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-top: 60px;
+            padding-bottom: 20px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--white);
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* محتوى الصفحة */
+        .favorites-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--section-title);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .favorites-count {
+            font-size: 14px;
+            color: var(--text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .favorites-count i {
+            color: var(--pink);
+        }
+        
+        .favorites-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .favorite-item {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--dark-gray);
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .favorite-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--gray);
+            margin-left: 10px;
+            overflow: hidden;
+        }
+        
+        .post-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .post-author {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        
+        .post-date {
+            font-size: 12px;
+            color: var(--dark-gray);
+            margin-top: 2px;
+        }
+        
+        .post-content {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .post-image {
+            width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+            max-height: 300px;
+            object-fit: cover;
+        }
+        
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--dark-gray);
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: var(--text);
+        }
+        
+        .like-btn {
+            color: var(--pink);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text);
+        }
+        
+        .empty-icon {
+            font-size: 50px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .explore-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي مع زر الرجوع -->
+    <div class="top-bar">
+        <div class="back-btn" onclick="navigateTo('7account.html')">‹</div>
+        <div class="app-title">المفضلة</div>
+        <div></div>
+    </div>
+    
+    <!-- محتوى الصفحة -->
+    <div class="favorites-container">
+        <h3 class="section-title">
+            <i class="fas fa-heart" style="color: var(--pink);"></i>
+            <span>المنشورات المعجبة</span>
+        </h3>
+        
+        <div class="favorites-count">
+            <i class="fas fa-heart"></i>
+            <span>5 منشور معجب به</span>
+        </div>
+        
+        <!-- قائمة المنشورات المفضلة -->
+        <div class="favorites-list" id="favoritesList">
+            <!-- منشور 1 -->
+            <div class="favorite-item">
+                <div class="post-header">
+                    <div class="post-avatar">
+                        <img src="https://via.placeholder.com/100" alt="صورة المستخدم">
+                    </div>
+                    <div>
+                        <div class="post-author">أحمد محمد</div>
+                        <div class="post-date">منذ يومين</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    هذا المنشور حصل على إعجابي بسبب المحتوى الرائع الذي يحتويه. أنصح الجميع بمتابعة هذا الكاتب المميز.
+                </div>
+                <img src="https://via.placeholder.com/600x400" alt="صورة المنشور" class="post-image">
+                <div class="post-actions">
+                    <button class="action-btn like-btn">
+                        <i class="fas fa-heart"></i>
+                        <span>إزالة الإعجاب</span>
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-share"></i>
+                        <span>مشاركة</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- منشور 2 -->
+            <div class="favorite-item">
+                <div class="post-header">
+                    <div class="post-avatar">
+                        <img src="https://via.placeholder.com/100" alt="صورة المستخدم">
+                    </div>
+                    <div>
+                        <div class="post-author">نورا علي</div>
+                        <div class="post-date">منذ أسبوع</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    وصف رائع لمنتج جديد جربته مؤخرًا. التجربة كانت ممتازة وأنا أوافق على كل ما ذكر في هذا المنشور.
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn like-btn">
+                        <i class="fas fa-heart"></i>
+                        <span>إزالة الإعجاب</span>
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-share"></i>
+                        <span>مشاركة</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- منشور 3 -->
+            <div class="favorite-item">
+                <div class="post-header">
+                    <div class="post-avatar">
+                        <img src="https://via.placeholder.com/100" alt="صورة المستخدم">
+                    </div>
+                    <div>
+                        <div class="post-author">إيلينور كاميلوت</div>
+                        <div class="post-date">منذ 3 أسابيع</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    نصائح قيمة جدًا لكل من يريد تطوير مهاراته في هذا المجال. أنا شخصيًا استفدت كثيرًا من هذه النصائح.
+                </div>
+                <img src="https://via.placeholder.com/600x300" alt="صورة المنشور" class="post-image">
+                <div class="post-actions">
+                    <button class="action-btn like-btn">
+                        <i class="fas fa-heart"></i>
+                        <span>إزالة الإعجاب</span>
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-share"></i>
+                        <span>مشاركة</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- حالة عدم وجود منشورات -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">
+                <i class="far fa-heart"></i>
+            </div>
+            <div class="empty-text">لا توجد منشورات معجبة بها بعد</div>
+            <button class="explore-btn" onclick="navigateTo('3Home.html')">
+                <i class="fas fa-compass"></i> استكشف المنشورات
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // دالة للانتقال إلى صفحة مع عرض شاشة التحميل
+        function navigateTo(page) {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 1000);
+        }
+        
+        // دالة إزالة الإعجاب عن منشور
+        function unlikePost(button) {
+            const postItem = button.closest('.favorite-item');
+            postItem.style.opacity = '0';
+            postItem.style.transform = 'translateX(100px)';
+            
+            setTimeout(() => {
+                postItem.remove();
+                checkEmptyState();
+            }, 300);
+        }
+        
+        // التحقق من حالة القائمة الفارغة
+        function checkEmptyState() {
+            const favoritesList = document.getElementById('favoritesList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (favoritesList.children.length === 0) {
+                emptyState.style.display = 'block';
+                document.querySelector('.favorites-count').innerHTML = '<i class="fas fa-heart"></i><span>0 منشور معجب به</span>';
+            }
+        }
+        
+        // تعيين أحداث النقر لأزرار الإعجاب
+        document.addEventListener('DOMContentLoaded', function() {
+            const likeButtons = document.querySelectorAll('.like-btn');
+            
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    unlikePost(this);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

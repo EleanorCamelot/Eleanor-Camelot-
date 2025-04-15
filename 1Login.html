@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eleanor Camelot - تسجيل الدخول وإنشاء حساب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            direction: rtl;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/storage/emulated/0/Eleanor Camelot Brand/Files/Photo/Picsart_25-04-04_22-10-26-368.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .main-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .form-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .login-container {
+            transform: translateX(0);
+            opacity: 1;
+            z-index: 2;
+        }
+        
+        .signup-container {
+            transform: translateX(100%);
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .show-signup .login-container {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        
+        .show-signup .signup-container {
+            transform: translateX(0);
+            opacity: 1;
+            z-index: 3;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 380px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .qr-text {
+            color: #333;
+            font-weight: bold;
+            margin: 15px 0;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .divider {
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+            margin: 15px 0;
+        }
+
+        input {
+            width: 95%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #bbb;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button:hover {
+            background-color: #222;
+        }
+
+        .signup-btn {
+            background-color: #555;
+        }
+
+        .signup-btn:hover {
+            background-color: #444;
+        }
+
+        .button:active {
+            transform: scale(0.95);
+        }
+
+        .social-login {
+            margin: 15px 0;
+        }
+
+        .shake {
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qr-header {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .qr-steps {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 2;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .qr-code-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+        }
+
+        .qr-buttons {
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .qr-btn {
+            background-color: #222222;
+            color: white;
+            border: none;
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-btn:active {
+            transform: scale(0.95);
+        }
+
+        .qr-btn i {
+            margin-left: 10px;
+        }
+
+        .qr-cancel {
+            background-color: #444;
+        }
+
+        .phone-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 350px;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        #recaptcha-container {
+            display: none;
+        }
+
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification Styles */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .notification {
+            position: relative;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: white;
+            background-color: #333;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s, fadeOut 0.5s 2.5s forwards;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-width: 250px;
+        }
+
+        .notification.success {
+            background-color: #4CAF50;
+        }
+
+        .notification.error {
+            background-color: #F44336;
+        }
+
+        .notification.warning {
+            background-color: #FF9800;
+        }
+
+        .notification.info {
+            background-color: #2196F3;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: -5px;
+            margin-left: 10px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* OTP Modal Styles */
+        .otp-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .otp-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 350px;
+        }
+
+        .otp-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .otp-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .otp-digit {
+            width: 40px;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Forgot Password Styles */
+        .forgot-password {
+            color: #2196F3;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            width: 95%;
+            height: 5px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 5px auto;
+            overflow: hidden;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .strength-weak {
+            background: #F44336;
+            width: 30%;
+        }
+
+        .strength-medium {
+            background: #FF9800;
+            width: 60%;
+        }
+
+        .strength-strong {
+            background: #4CAF50;
+            width: 100%;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            color: #666;
+            text-align: left;
+            margin-left: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    
+    <!-- مكتبات Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+</head>
+<body>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>جاري المعالجة...</p>
+        </div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="main-container" id="mainContainer">
+        <!-- واجهة تسجيل الدخول -->
+        <div class="form-container login-container">
+            <div class="container">
+                <h2>Welcome To <span class="brand-name">Eleanor Camelot</span></h2>
+                <p>In Avalon</p>
+                
+                <input type="email" placeholder="البريد الإلكتروني" id="loginEmail">
+                <input type="password" placeholder="كلمة المرور" id="loginPassword">
+                
+                <p class="forgot-password" onclick="showForgotPassword()">نسيت كلمة المرور؟</p>
+                
+                <button class="button" onclick="validateLogin()">تسجيل الدخول</button>
+                
+                <p class="qr-text" onclick="showQRLogin()">OR تسجيل الدخول برمز</p>
+                
+                <hr class="divider">
+                
+                <div class="social-login">
+                    <p>يمكنك التسجيل أيضاً بـ:</p>
+                    <button class="button" onclick="loginWithGoogle()">
+                        <i class="fab fa-google icon"></i> Google
+                    </button>
+                    <button class="button" onclick="loginWithApple()">
+                        <i class="fab fa-apple icon"></i> Apple
+                    </button>
+                    <button class="button" onclick="showPhoneLogin()">
+                        <i class="fas fa-phone icon"></i> رقم الهاتف
+                    </button>
+                </div>
+                
+                <p>ليس لديك حساب ؟</p>
+                <button class="button signup-btn" onclick="toggleForms()">إنشاء حساب</button>
+            </div>
+        </div>
+        
+        <!-- واجهة إنشاء الحساب -->
+        <div class="form-container signup-container">
+            <div class="container">
+                <h2>Create an account in <span class="brand-name">Eleanor Camelot</span></h2>
+                <p>انضم إلينا وابدأ تجربتك الآن!</p>
+
+                <input type="email" placeholder="البريد الإلكتروني" id="signupEmail">
+                <input type="password" placeholder="كلمة المرور" id="signupPassword" oninput="checkPasswordStrength()">
+                <div class="password-strength">
+                    <div class="strength-meter" id="strengthMeter"></div>
+                </div>
+                <p class="strength-text" id="strengthText">قوة كلمة المرور</p>
+                <input type="password" placeholder="تأكيد كلمة المرور" id="signupConfirmPassword">
+                <input type="text" placeholder="رقم الهاتف (اختياري)" id="signupPhone">
+
+                <button class="button" onclick="createAccount()">إنشاء حساب</button>
+                <p>هل لديك حساب؟ <a href="javascript:void(0)" onclick="toggleForms()">تسجيل الدخول</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- واجهة QR -->
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-header">تسجيل الدخول برمز QR</div>
+        
+        <div class="qr-steps">
+            1. افتح تطبيق Eleanor Camelot على هاتفك<br>
+            2. انتقل إلى إعدادات الحساب<br>
+            3. اختر "تسجيل الدخول برمز QR"<br>
+            4. امسح الرمز أدناه
+        </div>
+        
+        <div class="qr-code-container">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=EleanorCamelotLogin:session123456" class="qr-code" alt="QR Code">
+        </div>
+        
+        <div class="qr-buttons">
+            <button class="qr-btn" onclick="openGallery()">
+                <i class="fas fa-images"></i> اختر صورة من المعرض
+            </button>
+            <button class="qr-btn" onclick="openCamera()">
+                <i class="fas fa-camera"></i> فتح الكاميرا
+            </button>
+            <button class="qr-btn qr-cancel" onclick="closeQRModal()">
+                <i class="fas fa-times"></i> إلغاء
+            </button>
+        </div>
+    </div>
+
+    <!-- واجهة تسجيل الهاتف -->
+    <div id="phoneModal" class="phone-modal">
+        <div class="phone-content">
+            <h2 style="text-align:center;margin-bottom:20px;">تسجيل الدخول برقم الهاتف</h2>
+            <input type="tel" class="phone-input" placeholder="أدخل رقم الهاتف مع رمز الدولة" id="phoneNumber">
+            <div id="recaptcha-container"></div>
+            <button class="button" onclick="sendOTP()">إرسال رمز التحقق</button>
+            <button class="button" style="background:#555;margin-top:10px;" onclick="closePhoneModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- واجهة إدخال OTP -->
+    <div id="otpModal" class="otp-modal">
+        <div class="otp-content">
+            <h2 style="text-align:center;margin-bottom:20px;">تحقق من رقم الهاتف</h2>
+            <p style="text-align:center;margin-bottom:20px;">لقد أرسلنا رمز التحقق إلى <span id="phoneNumberDisplay"></span></p>
+            
+            <div class="otp-input-container">
+                <input type="text" class="otp-digit" maxlength="1" oninput="moveToNext(this, 1)">
+                <input type="text" class="otp-digit" maxlength="1" oninput="moveToNext(this, 2)">
+                <input type="text" class="otp-digit" maxlength="1" oninput="moveToNext(this, 3)">
+                <input type="text" class="otp-digit" maxlength="1" oninput="moveToNext(this, 4)">
+                <input type="text" class="otp-digit" maxlength="1" oninput="moveToNext(this, 5)">
+                <input type="text" class="otp-digit" maxlength="1" oninput="moveToNext(this, 6)">
+            </div>
+            
+            <p id="otpError" style="color:#F44336;text-align:center;margin:10px 0;display:none;">رمز التحقق غير صحيح</p>
+            
+            <button class="button" onclick="verifyOTP()">تحقق</button>
+            <button class="button" style="background:#555;margin-top:10px;" onclick="resendOTP()">إعادة إرسال الرمز</button>
+            <button class="button" style="background:#777;margin-top:10px;" onclick="closeOTPModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- واجهة استعادة كلمة المرور -->
+    <div id="forgotPasswordModal" class="phone-modal">
+        <div class="phone-content">
+            <h2 style="text-align:center;margin-bottom:20px;">استعادة كلمة المرور</h2>
+            <p style="text-align:center;margin-bottom:20px;">أدخل بريدك الإلكتروني لإرسال رابط إعادة تعيين كلمة المرور</p>
+            
+            <input type="email" class="phone-input" placeholder="البريد الإلكتروني" id="forgotPasswordEmail">
+            
+            <button class="button" onclick="sendPasswordResetEmail()">إرسال الرابط</button>
+            <button class="button" style="background:#555;margin-top:10px;" onclick="closeForgotPasswordModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        // تهيئة Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3X0KZ3TrO6LQppj__Qib9XMJgw2oFhuE",
+            authDomain: "eleanor-camelot.firebaseapp.com",
+            projectId: "eleanor-camelot",
+            storageBucket: "eleanor-camelot.appspot.com",
+            messagingSenderId: "318376170485",
+            appId: "1:318376170485:web:0ebc12e61c61afa7586b3a",
+            measurementId: "G-SGH05LJQBY"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const analytics = firebase.analytics();
+        
+        // متغيرات عامة
+        let confirmationResult = null;
+        let phoneNumber = '';
+
+        // تأثير سقوط الأحرف
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const text = "Eleanor Camelot".split("");
+        const letters = [];
+
+        class Letter {
+            constructor(x, y, char) {
+                this.x = x;
+                this.y = y;
+                this.char = char;
+                this.speed = Math.random() * 2 + 1;
+                this.rotation = Math.random() * 360;
+                this.opacity = 1;
+                this.breaking = false;
+            }
+
+            fall() {
+                if (!this.breaking) {
+                    this.y += this.speed;
+                } else {
+                    this.opacity -= 0.02;
+                }
+
+                if (this.y > canvas.height - 50) {
+                    this.breaking = true;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.font = "bold 24px Arial";
+                ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillText(this.char, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        function createLetters() {
+            for (let i = 0; i < 15; i++) {
+                let x = Math.random() * canvas.width;
+                let y = Math.random() * -canvas.height;
+                let char = text[Math.floor(Math.random() * text.length)];
+                letters.push(new Letter(x, y, char));
+            }
+        }
+
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            letters.forEach((letter, index) => {
+                letter.fall();
+                letter.draw();
+                if (letter.opacity <= 0) {
+                    letters.splice(index, 1);
+                    let x = Math.random() * canvas.width;
+                    let y = Math.random() * -50;
+                    let char = text[Math.floor(Math.random() * text.length)];
+                    letters.push(new Letter(x, y, char));
+                }
+            });
+            requestAnimationFrame(update);
+        }
+
+        createLetters();
+        update();
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // وظائف العرض والإخفاء
+        function showLoader(show) {
+            document.getElementById('loader').style.display = show ? 'flex' : 'none';
+        }
+
+        function showNotification(type, message) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <span>${message}</span>
+                <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
+            `;
+            container.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        function toggleForms() {
+            document.getElementById("mainContainer").classList.toggle("show-signup");
+        }
+
+        // التحقق من قوة كلمة المرور
+        function checkPasswordStrength() {
+            const password = document.getElementById("signupPassword").value;
+            const strengthMeter = document.getElementById("strengthMeter");
+            const strengthText = document.getElementById("strengthText");
+            
+            // Reset classes
+            strengthMeter.className = 'strength-meter';
+            
+            if (password.length === 0) {
+                strengthText.textContent = 'قوة كلمة المرور';
+                return;
+            }
+            
+            // Calculate strength
+            let strength = 0;
+            
+            // Length check
+            if (password.length > 7) strength += 1;
+            if (password.length > 10) strength += 1;
+            
+            // Character variety
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Update UI
+            if (strength < 3) {
+                strengthMeter.classList.add('strength-weak');
+                strengthText.textContent = 'ضعيفة';
+                strengthText.style.color = '#F44336';
+            } else if (strength < 5) {
+                strengthMeter.classList.add('strength-medium');
+                strengthText.textContent = 'متوسطة';
+                strengthText.style.color = '#FF9800';
+            } else {
+                strengthMeter.classList.add('strength-strong');
+                strengthText.textContent = 'قوية';
+                strengthText.style.color = '#4CAF50';
+            }
+        }
+
+        // وظيفة تسجيل الدخول
+        function validateLogin() {
+            let email = document.getElementById("loginEmail").value;
+            let password = document.getElementById("loginPassword").value;
+
+            if (email === "" || password === "") {
+                showNotification('error', "الرجاء إدخال البريد الإلكتروني وكلمة المرور!");
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showNotification('error', "البريد الإلكتروني غير صالح!");
+                return;
+            }
+
+            showLoader(true);
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    if (userCredential.user.emailVerified) {
+                        showNotification('success', "تم تسجيل الدخول بنجاح! جاري التوجيه...");
+                        analytics.logEvent('login_success', { method: 'email' });
+                        
+                        setTimeout(() => {
+                            window.location.href = "EleanorCamelot2.html";
+                        }, 1500);
+                    } else {
+                        showNotification('warning', "يرجى تفعيل حسابك عبر البريد الإلكتروني قبل تسجيل الدخول");
+                        auth.signOut();
+                    }
+                })
+                .catch((error) => {
+                    analytics.logEvent('login_error', { error: error.code });
+                    let errorMessage = "خطأ في تسجيل الدخول: ";
+                    switch (error.code) {
+                        case "auth/invalid-email":
+                            errorMessage += "بريد إلكتروني غير صالح";
+                            break;
+                        case "auth/user-disabled":
+                            errorMessage += "هذا الحساب معطل";
+                            break;
+                        case "auth/user-not-found":
+                            errorMessage += "لا يوجد حساب بهذا البريد الإلكتروني";
+                            break;
+                        case "auth/wrong-password":
+                            errorMessage += "كلمة المرور غير صحيحة";
+                            break;
+                        default:
+                            errorMessage += error.message;
+                    }
+                    showNotification('error', errorMessage);
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+        }
+
+        // وظيفة إنشاء الحساب
+        function createAccount() {
+            let email = document.getElementById("signupEmail").value;
+            let password = document.getElementById("signupPassword").value;
+            let confirmPassword = document.getElementById("signupConfirmPassword").value;
+            let container = document.querySelector(".signup-container .container");
+
+            if (email === "" || password === "" || confirmPassword === "") {
+                container.classList.add("shake");
+                showNotification('warning', "الرجاء إكمال جميع الحقول المطلوبة.");
+                setTimeout(() => container.classList.remove("shake"), 300);
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showNotification('error', "البريد الإلكتروني غير صالح!");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('error', "كلمة المرور وتأكيدها غير متطابقين.");
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('error', "كلمة المرور يجب أن تكون 6 أحرف على الأقل.");
+                return;
+            }
+
+            showLoader(true);
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    analytics.logEvent('signup_success', { method: 'email' });
+                    return userCredential.user.sendEmailVerification({
+                        url: window.location.origin + '/EleanorCamelot2.html',
+                        handleCodeInApp: true
+                    });
+                })
+                .then(() => {
+                    showNotification('success', "تم إنشاء الحساب بنجاح! يرجى تفعيل حسابك عبر البريد الإلكتروني الذي أرسلناه إليك.");
+                    toggleForms();
+                    
+                    // إرسال بيانات المستخدم إلى قاعدة البيانات إذا لزم الأمر
+                    // saveUserData(userCredential.user);
+                })
+                .catch((error) => {
+                    analytics.logEvent('signup_error', { error: error.code });
+                    let errorMessage = "خطأ في إنشاء الحساب: ";
+                    switch (error.code) {
+                        case "auth/email-already-in-use":
+                            errorMessage += "هذا البريد الإلكتروني مستخدم بالفعل";
+                            break;
+                        case "auth/invalid-email":
+                            errorMessage += "بريد إلكتروني غير صالح";
+                            break;
+                        case "auth/weak-password":
+                            errorMessage += "كلمة المرور ضعيفة (يجب أن تكون 6 أحرف على الأقل)";
+                            break;
+                        default:
+                            errorMessage += error.message;
+                    }
+                    showNotification('error', errorMessage);
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+        }
+
+        // وظائف QR Code
+        function showQRLogin() {
+            document.getElementById("qrModal").style.display = "flex";
+        }
+
+        function closeQRModal() {
+            document.getElementById("qrModal").style.display = "none";
+        }
+
+        function openGallery() {
+            showNotification('info', "جارٍ فتح معرض الصور لمسح رمز QR...");
+            // هنا يمكنك إضافة كود لفتح معرض الصور
+        }
+
+        function openCamera() {
+            showNotification('info', "جارٍ فتح الكاميرا لمسح رمز QR...");
+            // هنا يمكنك إضافة كود لفتح الكاميرا
+        }
+
+        // وظائف تسجيل الدخول الأخرى
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('profile');
+            provider.addScope('email');
+            
+            showLoader(true);
+            
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    analytics.logEvent('login_success', { method: 'google' });
+                    showNotification('success', "تم تسجيل الدخول بحساب Google بنجاح!");
+                    setTimeout(() => {
+                        window.location.href = "EleanorCamelot2.html";
+                    }, 1500);
+                })
+                .catch((error) => {
+                    analytics.logEvent('login_error', { error: error.code });
+                    showNotification('error', "خطأ في تسجيل الدخول بحساب Google: " + error.message);
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+        }
+
+        function loginWithApple() {
+            showNotification('info', "جارٍ تسجيل الدخول بحساب Apple...");
+            // يمكنك إضافة دعم Apple Sign-In هنا
+        }
+
+        function showPhoneLogin() {
+            document.getElementById("phoneModal").style.display = "flex";
+            // تهيئة reCAPTCHA
+            if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                    'size': 'invisible',
+                    'callback': (response) => {
+                        // reCAPTCHA solved, allow sendOTP
+                    }
+                });
+            }
+        }
+
+        function closePhoneModal() {
+            document.getElementById("phoneModal").style.display = "none";
+        }
+
+        function sendOTP() {
+            phoneNumber = document.getElementById("phoneNumber").value;
+            if (phoneNumber === "") {
+                showNotification('error', "الرجاء إدخال رقم الهاتف");
+                return;
+            }
+
+            // إضافة رمز الدولة إذا لم يكن موجوداً
+            if (!phoneNumber.startsWith('+')) {
+                phoneNumber = '+966' + phoneNumber;
+            }
+
+            showLoader(true);
+            
+            const appVerifier = window.recaptchaVerifier;
+            
+            auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+                .then((confirmation) => {
+                    confirmationResult = confirmation;
+                    showNotification('success', "تم إرسال رمز التحقق إلى الرقم: " + phoneNumber);
+                    closePhoneModal();
+                    showOTPModal();
+                })
+                .catch((error) => {
+                    analytics.logEvent('phone_login_error', { error: error.code });
+                    let errorMessage = "خطأ في إرسال رمز التحقق: ";
+                    switch (error.code) {
+                        case "auth/invalid-phone-number":
+                            errorMessage += "رقم الهاتف غير صالح";
+                            break;
+                        case "auth/too-many-requests":
+                            errorMessage += "لقد تجاوزت الحد المسموح من المحاولات، يرجى المحاولة لاحقاً";
+                            break;
+                        default:
+                            errorMessage += error.message;
+                    }
+                    showNotification('error', errorMessage);
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+        }
+
+        // وظائف OTP
+        function showOTPModal() {
+            document.getElementById("phoneNumberDisplay").textContent = phoneNumber;
+            document.getElementById("otpModal").style.display = "flex";
+            // التركيز على أول حقل OTP
+            document.querySelector('.otp-digit').focus();
+        }
+
+        function closeOTPModal() {
+            document.getElementById("otpModal").style.display = "none";
+            confirmationResult = null;
+        }
+
+        function moveToNext(input, nextIndex) {
+            const value = input.value;
+            if (value.length === 1) {
+                const nextInput = document.querySelector(`.otp-digit:nth-child(${nextIndex + 1})`);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
+
+        function verifyOTP() {
+            const digits = document.querySelectorAll('.otp-digit');
+            let otp = '';
+            digits.forEach(digit => {
+                otp += digit.value;
+            });
+            
+            if (otp.length !== 6) {
+                document.getElementById("otpError").style.display = 'block';
+                return;
+            }
+            
+            showLoader(true);
+            
+            confirmationResult.confirm(otp)
+                .then((result) => {
+                    analytics.logEvent('login_success', { method: 'phone' });
+                    showNotification('success', "تم التحقق بنجاح! جاري التوجيه...");
+                    closeOTPModal();
+                    setTimeout(() => {
+                        window.location.href = "EleanorCamelot2.html";
+                    }, 1500);
+                })
+                .catch((error) => {
+                    analytics.logEvent('otp_verification_error', { error: error.code });
+                    document.getElementById("otpError").style.display = 'block';
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+        }
+
+        function resendOTP() {
+            document.getElementById("otpError").style.display = 'none';
+            sendOTP();
+        }
+
+        // وظائف استعادة كلمة المرور
+        function showForgotPassword() {
+            document.getElementById("forgotPasswordModal").style.display = "flex";
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById("forgotPasswordModal").style.display = "none";
+        }
+
+        function sendPasswordResetEmail() {
+            const email = document.getElementById("forgotPasswordEmail").value;
+            
+            if (!validateEmail(email)) {
+                showNotification('error', "الرجاء إدخال بريد إلكتروني صحيح");
+                return;
+            }
+            
+            showLoader(true);
+            
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    showNotification('success', "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني");
+                    closeForgotPasswordModal();
+                })
+                .catch((error) => {
+                    let errorMessage = "خطأ في إرسال رابط الاستعادة: ";
+                    switch (error.code) {
+                        case "auth/user-not-found":
+                            errorMessage += "لا يوجد حساب بهذا البريد الإلكتروني";
+                            break;
+                        default:
+                            errorMessage += error.message;
+                    }
+                    showNotification('error', errorMessage);
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+        }
+
+        // وظائف مساعدة
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // إغلاق النوافذ عند النقر خارجها
+        window.onclick = function(event) {
+            const qrModal = document.getElementById("qrModal");
+            const phoneModal = document.getElementById("phoneModal");
+            const otpModal = document.getElementById("otpModal");
+            const forgotModal = document.getElementById("forgotPasswordModal");
+            
+            if (event.target == qrModal) {
+                closeQRModal();
+            }
+            if (event.target == phoneModal) {
+                closePhoneModal();
+            }
+            if (event.target == otpModal) {
+                closeOTPModal();
+            }
+            if (event.target == forgotModal) {
+                closeForgotPasswordModal();
+            }
+        }
+
+        // التحقق من حالة تسجيل الدخول عند تحميل الصفحة
+        auth.onAuthStateChanged((user) => {
+            if (user && user.emailVerified) {
+                // إذا كان المستخدم مسجلاً دخولاً ومفعلًا، توجيهه إلى الصفحة الرئيسية
+                window.location.href = "EleanorCamelot2.html";
+            }
+        });
+    </script>
+</body>
+</html>

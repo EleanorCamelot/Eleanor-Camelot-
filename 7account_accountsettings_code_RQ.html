@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رموز RQ - Eleanor Camelot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --green: #2ecc71;
+            --blue: #2980b9;
+            --orange: #e67e22;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-bottom: 20px;
+            padding-top: 60px;
+        }
+        
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: var(--text);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .qr-section {
+            margin-bottom: 30px;
+        }
+        
+        .qr-container {
+            background-color: var(--white);
+            border: 1px solid var(--dark-gray);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .qr-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .public-title {
+            color: var(--blue);
+        }
+        
+        .secret-title {
+            color: var(--orange);
+        }
+        
+        .qr-code {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--white);
+            border: 1px dashed var(--dark-gray);
+            border-radius: 10px;
+        }
+        
+        .qr-code img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .code-value {
+            font-family: monospace;
+            font-size: 16px;
+            background-color: var(--gray);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px auto;
+            word-break: break-all;
+            border: 1px solid var(--dark-gray);
+            text-align: center;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background-color: #111111;
+        }
+        
+        .copy-btn.copied {
+            background-color: var(--green);
+        }
+        
+        .lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .lock-form {
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+        }
+        
+        .lock-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+        
+        .lock-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--dark-gray);
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .lock-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .lock-error {
+            color: var(--red);
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .warning-box {
+            background-color: #fff8e1;
+            border-right: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: right;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .warning-icon {
+            color: #ff9800;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .warning-text {
+            font-size: 14px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="back-btn" id="backButton">‹</div>
+        <div class="app-title">رموز RQ</div>
+        <div></div>
+    </div>
+    
+    <!-- المحتوى الرئيسي -->
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-key"></i>
+            رموز التعريف الخاصة بك
+        </h2>
+        
+        <!-- الرمز العام -->
+        <div class="qr-section">
+            <div class="qr-container">
+                <h3 class="qr-title public-title">
+                    <i class="fas fa-globe"></i>
+                    الرمز العام (RQ)
+                </h3>
+                <div id="public-qrcode" class="qr-code"></div>
+                <div class="code-value" id="public-rq-text"></div>
+                <button class="copy-btn" onclick="copyToClipboard('public-rq-text', this)">
+                    <i class="far fa-copy"></i>
+                    نسخ الرمز العام
+                </button>
+            </div>
+            <p style="text-align: center; font-size: 14px; color: var(--text);">
+                يمكنك مشاركة هذا الرمز مع الآخرين لإضافتك كصديق
+            </p>
+        </div>
+        
+        <!-- الرمز السري -->
+        <div class="qr-section">
+            <div class="qr-container">
+                <h3 class="qr-title secret-title">
+                    <i class="fas fa-lock"></i>
+                    الرمز السري (RQ)
+                </h3>
+                <div id="secret-qrcode" class="qr-code" style="display: none;"></div>
+                <div class="code-value" id="secret-rq-text" style="display: none;"></div>
+                <button class="copy-btn" id="show-secret-btn" onclick="showSecretCode()">
+                    <i class="fas fa-eye"></i>
+                    عرض الرمز السري
+                </button>
+            </div>
+            <p style="text-align: center; font-size: 14px; color: var(--text);">
+                هذا الرمز مثل كلمة المرور، لا تشاركه مع أحد
+            </p>
+        </div>
+        
+        <!-- تحذير -->
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle warning-icon"></i>
+            <div class="warning-text">
+                <strong>تنبيه أمان:</strong> الرمز السري يمكنه الوصول الكامل إلى حسابك.
+                احتفظ به في مكان آمن ولا تشاركه مع أي شخص.
+            </div>
+        </div>
+    </div>
+    
+    <!-- شاشة القفل -->
+    <div class="lock-screen" id="lockScreen">
+        <div class="lock-form">
+            <h3 class="lock-title">أدخل رمز القفل</h3>
+            <input type="password" class="lock-input" id="lockCode" placeholder="أدخل رمز القفل">
+            <button class="lock-submit" onclick="verifyLockCode()">فتح</button>
+            <div class="lock-error" id="lockError">رمز القفل غير صحيح!</div>
+        </div>
+    </div>
+
+    <script>
+        // نظام إدارة الحسابات مع الرموز الفريدة
+        class AccountSystem {
+            constructor() {
+                this.loadAccount();
+            }
+            
+            loadAccount() {
+                const accountData = localStorage.getItem('userAccount');
+                if (accountData) {
+                    this.account = JSON.parse(accountData);
+                }
+            }
+            
+            getAccountInfo() {
+                return this.account;
+            }
+            
+            verifyLockCode(code) {
+                return code === this.account.lockCode;
+            }
+        }
+        
+        // إنشاء مثيل لنظام الحسابات
+        const accountSystem = new AccountSystem();
+        const accountInfo = accountSystem.getAccountInfo();
+        
+        // عناصر DOM
+        const backButton = document.getElementById('backButton');
+        const lockScreen = document.getElementById('lockScreen');
+        const lockCodeInput = document.getElementById('lockCode');
+        const lockError = document.getElementById('lockError');
+        const showSecretBtn = document.getElementById('show-secret-btn');
+        
+        // زر الرجوع
+        backButton.addEventListener('click', function() {
+            window.location.href = '7account.html';
+        });
+        
+        // إنشاء رموز QR
+        function generateQRCodes() {
+            if (accountInfo) {
+                // الرمز العام
+                if (document.getElementById('public-qrcode')) {
+                    new QRCode(document.getElementById('public-qrcode'), {
+                        text: accountInfo.publicRQ,
+                        width: 180,
+                        height: 180,
+                        colorDark: "#2980b9",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    document.getElementById('public-rq-text').textContent = accountInfo.publicRQ;
+                }
+                
+                // الرمز السري
+                if (document.getElementById('secret-qrcode')) {
+                    new QRCode(document.getElementById('secret-qrcode'), {
+                        text: accountInfo.secretRQ,
+                        width: 180,
+                        height: 180,
+                        colorDark: "#e67e22",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    document.getElementById('secret-rq-text').textContent = accountInfo.secretRQ;
+                }
+            } else {
+                alert('لا يوجد حساب مسجل! سيتم توجيهك إلى صفحة التسجيل.');
+                window.location.href = 'register.html';
+            }
+        }
+        
+        // عرض الرمز السري
+        function showSecretCode() {
+            lockScreen.style.display = 'flex';
+            lockCodeInput.focus();
+        }
+        
+        // التحقق من رمز القفل
+        function verifyLockCode() {
+            const enteredCode = lockCodeInput.value;
+            
+            if (accountSystem.verifyLockCode(enteredCode)) {
+                // إخفاء شاشة القفل
+                lockScreen.style.display = 'none';
+                lockCodeInput.value = '';
+                lockError.style.display = 'none';
+                
+                // عرض الرمز السري
+                document.getElementById('secret-qrcode').style.display = 'block';
+                document.getElementById('secret-rq-text').style.display = 'block';
+                
+                // تغيير نص الزر
+                showSecretBtn.innerHTML = '<i class="fas fa-eye-slash"></i> إخفاء الرمز السري';
+                showSecretBtn.onclick = function() {
+                    hideSecretCode();
+                };
+            } else {
+                // عرض رسالة الخطأ
+                lockError.style.display = 'block';
+            }
+        }
+        
+        // إخفاء الرمز السري
+        function hideSecretCode() {
+            document.getElementById('secret-qrcode').style.display = 'none';
+            document.getElementById('secret-rq-text').style.display = 'none';
+            
+            // تغيير نص الزر
+            showSecretBtn.innerHTML = '<i class="fas fa-eye"></i> عرض الرمز السري';
+            showSecretBtn.onclick = function() {
+                showSecretCode();
+            };
+        }
+        
+        // دالة نسخ النص إلى الحافظة
+        function copyToClipboard(elementId, button) {
+            const element = document.getElementById(elementId);
+            const textToCopy = element.textContent;
+            
+            navigator.clipboard.writeText(textToCopy).then(function() {
+                // تغيير نص الزر مؤقتًا للإشارة إلى أن النسخ تم بنجاح
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> تم النسخ!';
+                button.classList.add('copied');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Failed to copy text: ', err);
+                alert('فشل نسخ النص. يرجى المحاولة مرة أخرى.');
+            });
+        }
+        
+        // إخفاء رسالة الخطأ عند البدء بكتابة رمز جديد
+        lockCodeInput.addEventListener('input', function() {
+            lockError.style.display = 'none';
+        });
+        
+        // استدعاء الدوال عند تحميل الصفحة
+        window.onload = function() {
+            generateQRCodes();
+        };
+    </script>
+</body>
+</html>

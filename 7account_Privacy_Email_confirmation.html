@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - تأكيد البريد الإلكتروني</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+            --success: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-top: 60px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--white);
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* محتوى الصفحة */
+        .confirmation-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--section-title);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .confirmation-content {
+            background-color: var(--gray);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .confirmation-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--success);
+            font-size: 40px;
+            border: 2px solid var(--success);
+        }
+        
+        .confirmation-message {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .email-display {
+            background-color: var(--white);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            color: var(--primary);
+            direction: ltr;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-secondary {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-disabled {
+            background-color: var(--dark-gray);
+            color: var(--text);
+            cursor: not-allowed;
+        }
+        
+        .spam-note {
+            font-size: 14px;
+            color: var(--text);
+            margin-top: 20px;
+        }
+        
+        .success-message {
+            color: var(--success);
+            font-weight: bold;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .countdown {
+            color: var(--primary);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي مع زر الرجوع المطابق -->
+    <div class="top-bar">
+        <div class="back-btn" onclick="navigateTo('7account.html')">‹</div>
+        <div class="app-title">تأكيد البريد الإلكتروني</div>
+        <div></div>
+    </div>
+    
+    <!-- محتوى الصفحة -->
+    <div class="confirmation-container">
+        <h3 class="section-title">
+            <i class="fas fa-envelope"></i>
+            <span>تأكيد البريد الإلكتروني</span>
+        </h3>
+        
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            
+            <div class="confirmation-message">
+                لقد أرسلنا رسالة تأكيد إلى بريدك الإلكتروني. يرجى النقر على الرابط الموجود في الرسالة لإكمال عملية التأكيد.
+            </div>
+            
+            <div class="email-display">
+                <i class="fas fa-envelope"></i> user@example.com
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> تم إرسال رسالة التأكيد بنجاح
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="openEmail()">
+                    <i class="fas fa-envelope-open-text"></i> فتح البريد الإلكتروني
+                </button>
+                <button class="btn btn-secondary" id="resendBtn" onclick="resendConfirmation()">
+                    <i class="fas fa-redo"></i> إعادة إرسال التأكيد
+                </button>
+            </div>
+            
+            <div class="countdown" id="countdown"></div>
+            
+            <p class="spam-note">
+                <i class="fas fa-info-circle"></i> إذا لم تتلقى البريد الإلكتروني، يرجى التحقق من مجلد الرسائل غير المرغوب فيها.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // دالة للانتقال إلى صفحة مع عرض شاشة التحميل
+        function navigateTo(page) {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 1000);
+        }
+        
+        // دالة فتح البريد الإلكتروني
+        function openEmail() {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            loadingScreen.querySelector('.loading-text').textContent = 'جاري فتح بريدك الإلكتروني...';
+            
+            // هنا يمكنك إضافة ربط مع تطبيق البريد الإلكتروني
+            setTimeout(() => {
+                alert('الرجاء التحقق من تطبيق البريد الإلكتروني الخاص بك');
+                loadingScreen.style.display = 'none';
+            }, 1500);
+        }
+        
+        // دالة إعادة إرسال التأكيد
+        function resendConfirmation() {
+            const resendBtn = document.getElementById('resendBtn');
+            const successMessage = document.getElementById('successMessage');
+            const countdownElement = document.getElementById('countdown');
+            
+            // تعطيل الزر
+            resendBtn.disabled = true;
+            resendBtn.classList.add('btn-disabled');
+            
+            // عرض رسالة النجاح
+            successMessage.style.display = 'block';
+            
+            // بدء العد التنازلي (60 ثانية)
+            let seconds = 60;
+            
+            const countdownInterval = setInterval(() => {
+                countdownElement.textContent = `يمكنك إعادة الإرسال بعد ${seconds} ثانية`;
+                seconds--;
+                
+                if (seconds < 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.textContent = '';
+                    resendBtn.disabled = false;
+                    resendBtn.classList.remove('btn-disabled');
+                }
+            }, 1000);
+            
+            // هنا يمكنك إضافة كود إعادة الإرسال الفعلي
+            setTimeout(() => {
+                // إخفاء رسالة النجاح بعد 5 ثواني
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

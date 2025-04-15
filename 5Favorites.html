@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - المفضلة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #8e44ad;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-bottom: 80px;
+            padding-top: 60px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* المحتوى الرئيسي */
+        .main-content {
+            padding: 20px;
+            transition: opacity 0.3s ease;
+        }
+        
+        .main-content.fade-out {
+            opacity: 0;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        /* فلاتر التصنيف */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: none;
+        }
+        
+        .filters::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .filter-btn {
+            background: var(--gray);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .filter-btn:hover {
+            background: var(--dark-gray);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* قائمة المفضلة */
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .favorite-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            align-items: center;
+        }
+        
+        .favorite-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .favorite-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-info h4 {
+            margin-bottom: 5px;
+            color: var(--text);
+            font-size: 16px;
+        }
+        
+        .item-info p {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--red);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+        
+        .remove-btn:hover {
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .add-to-cart {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #7d3c98;
+        }
+        
+        /* رسالة المفضلة الفارغة */
+        .empty-favorites {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text);
+        }
+        
+        .empty-favorites-icon {
+            font-size: 50px;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+        }
+        
+        /* القائمة السفلية */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid var(--dark-gray);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
+            transition: color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .nav-item i {
+            font-size: 18px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="app-title">إيلينور كاميلوت</div>
+        <div>المفضلة</div>
+    </div>
+    
+    <!-- المحتوى الرئيسي -->
+    <div class="main-content" id="main-content">
+        <h2 class="page-title"><i class="fas fa-heart"></i> المفضلة</h2>
+        
+        <div class="filters">
+            <button class="filter-btn active">الكل</button>
+            <button class="filter-btn">الملابس</button>
+            <button class="filter-btn">الإكسسوارات</button>
+            <button class="filter-btn">الأحذية</button>
+            <button class="filter-btn">الساعات</button>
+        </div>
+        
+        <div class="favorites-list">
+            <!-- العنصر 1 -->
+            <div class="favorite-item">
+                <img src="fav1.jpg" alt="بدلة كلاسيكية">
+                <div class="item-info">
+                    <h4>بدلة كلاسيكية</h4>
+                    <p>250 ر.س</p>
+                    <div class="action-btns">
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>أضف إلى السلة</span>
+                        </button>
+                        <button class="remove-btn">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>إزالة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- العنصر 2 -->
+            <div class="favorite-item">
+                <img src="fav2.jpg" alt="ساعة يد">
+                <div class="item-info">
+                    <h4>ساعة يد فاخرة</h4>
+                    <p>320 ر.س</p>
+                    <div class="action-btns">
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>أضف إلى السلة</span>
+                        </button>
+                        <button class="remove-btn">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>إزالة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- العنصر 3 -->
+            <div class="favorite-item">
+                <img src="fav3.jpg" alt="حذاء رياضي">
+                <div class="item-info">
+                    <h4>حذاء رياضي</h4>
+                    <p>180 ر.س</p>
+                    <div class="action-btns">
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>أضف إلى السلة</span>
+                        </button>
+                        <button class="remove-btn">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>إزالة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- العنصر 4 -->
+            <div class="favorite-item">
+                <img src="fav4.jpg" alt="قميص رسمي">
+                <div class="item-info">
+                    <h4>قميص رسمي</h4>
+                    <p>120 ر.س</p>
+                    <div class="action-btns">
+                        <button class="add-to-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>أضف إلى السلة</span>
+                        </button>
+                        <button class="remove-btn">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>إزالة</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- القائمة السفلية -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item" data-page="3Home.html">
+            <i class="fas fa-home"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item" data-page="4thestore.html">
+            <i class="fas fa-boxes"></i>
+            <span>المتجر</span>
+        </a>
+        <a href="#" class="nav-item active" data-page="5Favorites.html">
+            <i class="fas fa-heart"></i>
+            <span>المفضلة</span>
+        </a>
+        <a href="#" class="nav-item" data-page="6cart.html">
+            <i class="fas fa-shopping-cart"></i>
+            <span>السلة</span>
+        </a>
+        <a href="#" class="nav-item" data-page="7account.html">
+            <i class="fas fa-user"></i>
+            <span>حساب</span>
+        </a>
+    </nav>
+
+    <script>
+        // متغير لتخزين الصفحة الحالية
+        let currentPage = '5Favorites.html';
+        
+        // دالة للانتقال السلس بين الصفحات
+        async function loadPage(page) {
+            if (currentPage === page) return;
+            
+            const loadingScreen = document.querySelector('.loading-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            // إضافة تأثير التلاشي
+            mainContent.classList.add('fade-out');
+            loadingScreen.style.display = 'flex';
+            
+            try {
+                // جلب محتوى الصفحة الجديدة
+                const response = await fetch(page);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const html = await response.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // استخراج المحتوى الرئيسي من الصفحة الجديدة
+                const newContent = tempDiv.querySelector('.main-content') || tempDiv.body;
+                
+                // تحديث المحتوى
+                setTimeout(() => {
+                    mainContent.innerHTML = newContent.innerHTML;
+                    mainContent.classList.remove('fade-out');
+                    loadingScreen.style.display = 'none';
+                    currentPage = page;
+                    
+                    // إعادة ربط الأحداث للعناصر الجديدة
+                    bindEvents();
+                    
+                    // تحديث عنوان الشريط العلوي
+                    const newTitle = tempDiv.querySelector('.top-bar div:last-child').textContent;
+                    document.querySelector('.top-bar div:last-child').textContent = newTitle;
+                    
+                    // تحديث عنوان الصفحة
+                    document.title = tempDiv.querySelector('title').textContent;
+                }, 300);
+                
+                // تحديث تاريخ المتصفح دون إعادة تحميل الصفحة
+                window.history.pushState({ page }, '', page);
+                
+            } catch (error) {
+                console.error('Error loading page:', error);
+                loadingScreen.style.display = 'none';
+                mainContent.classList.remove('fade-out');
+                window.location.href = page; // العودة للطريقة التقليدية في حالة الخطأ
+            }
+        }
+        
+        // دالة لربط الأحداث
+        function bindEvents() {
+            // تفاعل أزرار الفلاتر
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const loadingScreen = document.querySelector('.loading-screen');
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.querySelector('.loading-text').textContent = 'جاري تطبيق الفلتر...';
+                    
+                    setTimeout(() => {
+                        document.querySelectorAll('.filter-btn').forEach(b => {
+                            b.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                        
+                        const filter = this.textContent;
+                        alert(`تم تطبيق فلتر: ${filter}`);
+                        loadingScreen.style.display = 'none';
+                    }, 1000);
+                });
+            });
+            
+            // تفاعل زر الإزالة من المفضلة
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const item = this.closest('.favorite-item');
+                    const itemName = item.querySelector('h4').textContent;
+                    
+                    if (confirm(`هل تريد إزالة ${itemName} من المفضلة؟`)) {
+                        const loadingScreen = document.querySelector('.loading-screen');
+                        loadingScreen.style.display = 'flex';
+                        loadingScreen.querySelector('.loading-text').textContent = 'جاري الإزالة من المفضلة...';
+                        
+                        setTimeout(() => {
+                            item.remove();
+                            
+                            // إذا لم يعد هناك عناصر، عرض رسالة المفضلة الفارغة
+                            if (document.querySelectorAll('.favorite-item').length === 0) {
+                                showEmptyFavorites();
+                            }
+                            loadingScreen.style.display = 'none';
+                        }, 1000);
+                    }
+                });
+            });
+            
+            // تفاعل زر إضافة إلى السلة
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const loadingScreen = document.querySelector('.loading-screen');
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.querySelector('.loading-text').textContent = 'جاري الإضافة إلى السلة...';
+                    
+                    setTimeout(() => {
+                        const item = this.closest('.favorite-item');
+                        const itemName = item.querySelector('h4').textContent;
+                        alert(`تمت إضافة ${itemName} إلى السلة`);
+                        loadingScreen.style.display = 'none';
+                    }, 1000);
+                });
+            });
+            
+            // تمييز العنصر النشط في القائمة السفلية
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    
+                    document.querySelectorAll('.nav-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    loadPage(page);
+                });
+            });
+        }
+        
+        // عرض رسالة المفضلة الفارغة
+        function showEmptyFavorites() {
+            const favoritesList = document.querySelector('.favorites-list');
+            favoritesList.innerHTML = `
+                <div class="empty-favorites">
+                    <div class="empty-favorites-icon">
+                        <i class="far fa-heart"></i>
+                    </div>
+                    <h3>قائمة المفضلة فارغة</h3>
+                    <p>يمكنك إضافة منتجات إلى المفضلة من خلال النقر على زر القلب في أي منتج</p>
+                </div>
+            `;
+        }
+        
+        // التعامل مع زر الرجوع في المتصفح
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.page) {
+                loadPage(event.state.page);
+            }
+        });
+        
+        // عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            bindEvents();
+            
+            // تخزين حالة الصفحة الأولى
+            window.history.replaceState({ page: currentPage }, '', currentPage);
+        });
+    </script>
+</body>
+</html>

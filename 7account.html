@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - حسابي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #8e44ad;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222; /* اللون الأسود الغامق للنصوص الفرعية */
+            --white: #ffffff;
+            --top-bar: #222222; /* لون الشريط العلوي أسود غامق */
+            --red: #e74c3c;
+            --section-title: #000000; /* لون عناوين الأقسام أسود غامق */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-bottom: 80px;
+            padding-top: 60px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* محتوى الحساب */
+        .account-container {
+            padding: 20px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-info h2 {
+            margin-bottom: 5px;
+            color: #000000; /* لون أسود غامق لاسم المستخدم */
+            font-size: 18px;
+        }
+        
+        .profile-info p {
+            color: var(--text);
+            font-size: 14px;
+        }
+        
+        .account-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--section-title);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .account-menu {
+            list-style: none;
+        }
+        
+        .account-menu li {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--dark-gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .account-menu li:hover {
+            background-color: var(--gray);
+        }
+        
+        .account-menu li:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+        
+        .menu-text {
+            flex: 1;
+            color: var(--text);
+        }
+        
+        .menu-arrow {
+            color: var(--dark-gray);
+        }
+        
+        .logout {
+            color: var(--red);
+        }
+        
+        /* القائمة السفلية */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid var(--dark-gray);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
+            transition: color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .nav-item i {
+            font-size: 18px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="app-title">إيلينور كاميلوت</div>
+        <div>حسابي</div>
+    </div>
+    
+    <!-- محتوى الحساب -->
+    <div class="account-container">
+        <div class="profile-header">
+            <div class="profile-pic">
+                <img src="storage/emulated/0/Eleanor Camelot Brand/Files/Photo/ProfilePicture.jpg" alt="صورة الملف الشخصي">
+            </div>
+            <div class="profile-info">
+                <h2><i class="fas fa-user"></i> user </h2>
+                <p><i class="fas fa-envelope"></i> user@example.com</p>
+            </div>
+        </div>
+        
+        <!-- إعدادات الحساب -->
+        <div class="account-section">
+            <h3 class="section-title"><i class="fas fa-cog"></i> Account Settings </h3>
+            <ul class="account-menu">
+                <li onclick="navigateTo('7account_accountsettings_Edit_profile.html')">
+                    <div class="menu-icon"><i class="fas fa-user-edit"></i></div>
+                    <span class="menu-text">تعديل الملف الشخصي</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="navigateTo('7account_accountsettings_code_RQ.html')">
+                    <div class="menu-icon"><i class="fas fa-key"></i></div>
+                    <span class="menu-text">رمز RQ الخاص بي</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- الخصوصية -->
+        <div class="account-section">
+            <h3 class="section-title"><i class="fas fa-lock"></i> Privacy </h3>
+            <ul class="account-menu">
+                <li onclick="navigateTo('7account_Privacy_Email_confirmation.html')">
+                    <div class="menu-icon"><i class="fas fa-envelope"></i></div>
+                    <span class="menu-text">تأكيد البريد الإلكتروني</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="navigateTo('7account_Privacy_change_password.html')">
+                    <div class="menu-icon"><i class="fas fa-lock"></i></div>
+                    <span class="menu-text">تغيير كلمة المرور</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="navigateTo('7account_Privacy_Account_type.html')">
+                    <div class="menu-icon"><i class="fas fa-users"></i></div>
+                    <span class="menu-text">نوع الحساب (خاص/عام/مستثمر)</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- المنشورات -->
+        <div class="account-section">
+            <h3 class="section-title"><i class="fas fa-file-alt"></i> Publications </h3>
+            <ul class="account-menu">
+                <li onclick="navigateTo('7account_Publications_Favorites.html')">
+                    <div class="menu-icon"><i class="fas fa-heart"></i></div>
+                    <span class="menu-text">المفضلة (المنشورات المعجبة)</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="navigateTo('7account_Publications_Save_list.html')">
+                    <div class="menu-icon"><i class="fas fa-save"></i></div>
+                    <span class="menu-text">قائمة الحفظ (المنشورات المحفوظة)</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- عام -->
+        <div class="account-section">
+            <h3 class="section-title"><i class="fas fa-cogs"></i> Public </h3>
+            <ul class="account-menu">
+                <li onclick="navigateTo('7account_general_Settings.html')">
+                    <div class="menu-icon"><i class="fas fa-sliders-h"></i></div>
+                    <span class="menu-text">الإعدادات</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="navigateTo('7account_general_Notifications.html')">
+                    <div class="menu-icon"><i class="fas fa-bell"></i></div>
+                    <span class="menu-text">الإشعارات</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="navigateTo('7account_general_work_team.html')">
+                    <div class="menu-icon"><i class="fas fa-headset"></i></div>
+                    <span class="menu-text">الدعم الفني</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="navigateTo('7account_general_Privacy_Instructions.html')">
+                    <div class="menu-icon"><i class="fas fa-file-contract"></i></div>
+                    <span class="menu-text">تعليمات الخصوصية</span>
+                    <span class="menu-arrow">›</span>
+                </li>
+                <li onclick="logout()">
+                    <div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div>
+                    <span class="menu-text logout">تسجيل الخروج</span>
+                    <span class="menu-arrow logout">›</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- القائمة السفلية -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item" data-page="3Home.html">
+            <i class="fas fa-home"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item" data-page="4thestore.html">
+            <i class="fas fa-boxes"></i>
+            <span>المتجر</span>
+        </a>
+        <a href="#" class="nav-item" data-page="5Favorites.html">
+            <i class="fas fa-heart"></i>
+            <span>المفضلة</span>
+        </a>
+        <a href="#" class="nav-item" data-page="6cart.html">
+            <i class="fas fa-shopping-cart"></i>
+            <span>السلة</span>
+        </a>
+        <a href="#" class="nav-item active" data-page="7account.html">
+            <i class="fas fa-user"></i>
+            <span>حساب</span>
+        </a>
+    </nav>
+
+    <script>
+        // دالة للانتقال إلى صفحة مع عرض شاشة التحميل
+        function navigateTo(page) {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 1000);
+        }
+        
+        // دالة تسجيل الخروج
+        function logout() {
+            const loadingScreen = document.querySelector('.loading-screen');
+            
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                loadingScreen.style.display = 'flex';
+                loadingScreen.querySelector('.loading-text').textContent = 'جاري تسجيل الخروج...';
+                
+                setTimeout(() => {
+                    alert('تم تسجيل الخروج بنجاح');
+                    window.location.href = 'login.html';
+                }, 1500);
+            }
+        }
+
+        // تمييز العنصر النشط في القائمة السفلية
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // إزالة النشط من جميع العناصر
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // إضافة النشط للعنصر الحالي
+                this.classList.add('active');
+                
+                // الانتقال إلى الصفحة المطلوبة
+                const page = this.getAttribute('data-page');
+                if (page) {
+                    navigateTo(page);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

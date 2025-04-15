@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - المنشورات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+            --green: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-bottom: 80px;
+            padding-top: 60px;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* قسم المنشورات */
+        .posts-section {
+            padding: 10px;
+        }
+        
+        .post {
+            background-color: var(--white);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--dark-gray);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+        }
+        
+        .post-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 10px;
+        }
+        
+        .post-user-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .post-more {
+            margin-right: auto;
+            color: var(--text);
+        }
+        
+        .post-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+        }
+        
+        .post-actions {
+            display: flex;
+            padding: 8px 12px;
+            gap: 15px;
+        }
+        
+        .post-action {
+            font-size: 24px;
+            color: var(--text);
+            cursor: pointer;
+        }
+        
+        .post-action.save {
+            margin-right: auto;
+        }
+        
+        .post-action.liked {
+            color: var(--red);
+        }
+        
+        .post-likes {
+            font-weight: bold;
+            font-size: 14px;
+            padding: 0 12px;
+        }
+        
+        .post-caption {
+            padding: 5px 12px;
+            font-size: 14px;
+        }
+        
+        .post-caption-user {
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .post-comments {
+            padding: 5px 12px;
+            color: var(--text);
+            opacity: 0.7;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .post-time {
+            padding: 5px 12px 15px;
+            color: var(--text);
+            opacity: 0.5;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .add-comment {
+            display: flex;
+            border-top: 1px solid var(--dark-gray);
+            padding: 12px;
+        }
+        
+        .comment-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 8px;
+            font-size: 14px;
+        }
+        
+        .post-comment-btn {
+            color: var(--primary);
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        /* القائمة السفلية */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid var(--dark-gray);
+            z-index: 90;
+        }
+        
+        .nav-item {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
+            transition: color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .nav-item i {
+            font-size: 18px;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        /* زر الإضافة */
+        .add-button {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* أنماط الانتقال السلس */
+        .page-content {
+            transition: opacity 0.3s ease;
+        }
+        
+        .page-content.fade-out {
+            opacity: 0;
+        }
+        
+        #main-content {
+            min-height: calc(100vh - 140px);
+        }
+        
+        /* نموذج إضافة منشور */
+        .add-post-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .add-post-form {
+            background-color: var(--white);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            padding: 20px;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--dark-gray);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .form-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .form-btn.cancel {
+            background-color: var(--gray);
+            color: var(--text);
+        }
+        
+        .form-btn.submit {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* شاشة تحميل المنشور */
+        .uploading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            display: none;
+        }
+        
+        .uploading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .uploading-text {
+            font-size: 18px;
+            color: white;
+        }
+        
+        /* رسالة التأكيد */
+        .confirmation-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1002;
+            text-align: center;
+            display: none;
+        }
+        
+        .confirmation-message i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .confirmation-message p {
+            margin-bottom: 15px;
+        }
+        
+        .confirmation-btn {
+            padding: 8px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* معاينة الصورة */
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            margin-top: 10px;
+            display: none;
+            border-radius: 5px;
+        }
+        
+        .char-counter {
+            font-size: 12px;
+            color: #777;
+            text-align: left;
+            margin-top: 5px;
+        }
+        
+        .char-counter.error {
+            color: var(--red);
+        }
+        
+        /* واجهة رفع الملفات المحسنة */
+        .file-upload-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 30px 20px;
+            border: 2px dashed var(--dark-gray);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--primary);
+            background-color: rgba(34, 34, 34, 0.05);
+        }
+        
+        .file-upload-label i {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .file-upload-label .upload-text {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .file-upload-label .upload-hint {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .file-upload-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+            multiple: true;
+        }
+        
+        .file-info {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--gray);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .file-info i {
+            margin-left: 5px;
+            color: var(--green);
+        }
+        
+        .file-name {
+            font-weight: bold;
+        }
+        
+        .file-size {
+            color: #777;
+            font-size: 12px;
+        }
+        
+        .remove-file {
+            color: var(--red);
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        /* معاينة الصور المتعددة */
+        .images-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .image-preview-item {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .selected-count {
+            font-size: 12px;
+            color: var(--primary);
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* نافذة التعليقات */
+        .comments-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--white);
+            z-index: 1003;
+            display: none;
+            flex-direction: column;
+        }
+        
+        .comments-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .comments-title {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .close-comments {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .comments-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .comment-item {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 10px;
+        }
+        
+        .comment-content {
+            flex: 1;
+        }
+        
+        .comment-user {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .comment-text {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .comment-time {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        
+        .comment-action {
+            font-size: 12px;
+            color: #777;
+            cursor: pointer;
+        }
+        
+        .comments-input-container {
+            padding: 15px;
+            border-top: 1px solid var(--dark-gray);
+            display: flex;
+            align-items: center;
+        }
+        
+        .comments-input {
+            flex: 1;
+            border: 1px solid var(--dark-gray);
+            border-radius: 20px;
+            padding: 10px 15px;
+            outline: none;
+        }
+        
+        .send-comment-btn {
+            margin-right: 10px;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <div class="app-title">إيلينور كاميلوت</div>
+        <div>المنشورات</div>
+    </div>
+    
+    <!-- المحتوى الرئيسي -->
+    <div id="main-content" class="page-content">
+        <!-- قسم المنشورات -->
+        <div class="posts-section" id="postsContainer">
+            <!-- المنشورات سيتم إضافتها هنا ديناميكيًا -->
+        </div>
+    </div>
+    
+    <!-- زر الإضافة -->
+    <button class="add-button" id="addPostButton"><i class="fas fa-plus"></i></button>
+    
+    <!-- نموذج إضافة منشور -->
+    <div class="add-post-modal" id="addPostModal">
+        <div class="add-post-form">
+            <h3 class="form-title">إضافة منشور جديد</h3>
+            
+            <div class="form-group">
+                <label class="form-label">صور المنشور (حد أقصى 20 صورة)</label>
+                <div class="file-upload-container">
+                    <label class="file-upload-label" id="fileUploadLabel">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <div class="upload-text">اختر صور أو اسحبها هنا</div>
+                        <div class="upload-hint">JPEG, PNG (حد أقصى 20 صورة)</div>
+                        <input type="file" id="postImages" class="file-upload-input" accept="image/*" multiple>
+                    </label>
+                    <div class="file-info" id="fileInfo">
+                        <span class="selected-count" id="selectedCount"></span>
+                        <div class="images-preview-container" id="imagesPreviewContainer"></div>
+                        <span class="remove-file" id="removeFile"><i class="fas fa-times"></i> إزالة الكل</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="postCaption" class="form-label">نص المنشور</label>
+                <textarea id="postCaption" class="form-textarea" placeholder="أدخل نص المنشور" maxlength="5000"></textarea>
+                <div class="char-counter" id="charCounter">0/5000</div>
+            </div>
+            
+            <div class="form-actions">
+                <button class="form-btn cancel" id="cancelPostBtn">إلغاء</button>
+                <button class="form-btn submit" id="submitPostBtn">نشر</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- شاشة تحميل المنشور -->
+    <div class="uploading-screen" id="uploadingScreen">
+        <div class="uploading-spinner"></div>
+        <div class="uploading-text">جاري نشر المنشور...</div>
+    </div>
+    
+    <!-- رسالة التأكيد -->
+    <div class="confirmation-message" id="confirmationMessage">
+        <i class="fas fa-check-circle"></i>
+        <p>تم نشر المنشور بنجاح!</p>
+        <button class="confirmation-btn" id="confirmBtn">موافق</button>
+    </div>
+    
+    <!-- نافذة التعليقات -->
+    <div class="comments-modal" id="commentsModal">
+        <div class="comments-header">
+            <div class="comments-title">التعليقات</div>
+            <div class="close-comments" id="closeCommentsBtn"><i class="fas fa-times"></i></div>
+        </div>
+        <div class="comments-container" id="commentsContainer">
+            <!-- التعليقات سيتم إضافتها هنا ديناميكيًا -->
+        </div>
+        <div class="comments-input-container">
+            <input type="text" class="comments-input" id="newCommentInput" placeholder="أضف تعليقاً...">
+            <div class="send-comment-btn" id="sendCommentBtn"><i class="fas fa-paper-plane"></i></div>
+        </div>
+    </div>
+    
+    <!-- القائمة السفلية -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" data-page="3Home.html">
+            <i class="fas fa-home"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="#" class="nav-item" data-page="4thestore.html">
+            <i class="fas fa-boxes"></i>
+            <span>المتجر</span>
+        </a>
+        <a href="#" class="nav-item" data-page="5Favorites.html">
+            <i class="fas fa-heart"></i>
+            <span>المفضلة</span>
+        </a>
+        <a href="#" class="nav-item" data-page="6cart.html">
+            <i class="fas fa-shopping-cart"></i>
+            <span>السلة</span>
+        </a>
+        <a href="#" class="nav-item" data-page="7account.html">
+            <i class="fas fa-user"></i>
+            <span>حسابي</span>
+        </a>
+    </nav>
+
+    <script>
+        // متغير لتخزين الصفحة الحالية
+        let currentPage = 'Home3.html';
+        
+        // بيانات المنشورات الأولية
+        const initialPosts = [
+            {
+                id: 1,
+                userAvatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+                userName: 'سارة أحمد',
+                imageUrl: 'https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                likes: 1234,
+                caption: 'هذا التصميم الجديد مستوحى من التراث العربي مع لمسة عصرية. ما رأيكم؟',
+                comments: 42,
+                time: 'منذ ساعتين',
+                isLiked: false,
+                isSaved: false,
+                commentsList: [
+                    {
+                        id: 1,
+                        userAvatar: 'https://randomuser.me/api/portraits/women/33.jpg',
+                        userName: 'أميرة محمد',
+                        text: 'التصميم رائع جداً! أحببت الألوان المستخدمة فيه.',
+                        time: 'منذ ساعة'
+                    },
+                    {
+                        id: 2,
+                        userAvatar: 'https://randomuser.me/api/portraits/men/45.jpg',
+                        userName: 'خالد علي',
+                        text: 'جميل جداً، هل متوفر باللون الأسود؟',
+                        time: 'منذ 45 دقيقة'
+                    }
+                ]
+            },
+            {
+                id: 2,
+                userAvatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+                userName: 'محمد خالد',
+                imageUrl: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                likes: 876,
+                caption: 'مجموعة جديدة من الإكسسوارات الذهبية بتصاميم مستوحاة من العمارة الإسلامية.',
+                comments: 23,
+                time: 'منذ 5 ساعات',
+                isLiked: false,
+                isSaved: false,
+                commentsList: [
+                    {
+                        id: 1,
+                        userAvatar: 'https://randomuser.me/api/portraits/women/22.jpg',
+                        userName: 'نورا سعيد',
+                        text: 'الإكسسوارات جميلة جداً، متى ستكون متوفرة في المتجر؟',
+                        time: 'منذ 3 ساعات'
+                    },
+                    {
+                        id: 2,
+                        userAvatar: 'https://randomuser.me/api/portraits/men/12.jpg',
+                        userName: 'أحمد محمود',
+                        text: 'أين يمكنني شراء هذه المجموعة؟',
+                        time: 'منذ ساعتين'
+                    }
+                ]
+            },
+            {
+                id: 3,
+                userAvatar: 'https://randomuser.me/api/portraits/women/68.jpg',
+                userName: 'نورا عبدالله',
+                imageUrl: 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                likes: 2543,
+                caption: 'كيف ترون هذا المزيج بين الألوان الترابية والتصاميم الحديثة؟ #موضة #إيلينور_كاميلوت',
+                comments: 87,
+                time: 'منذ يوم واحد',
+                isLiked: true,
+                isSaved: true,
+                commentsList: [
+                    {
+                        id: 1,
+                        userAvatar: 'https://randomuser.me/api/portraits/women/55.jpg',
+                        userName: 'لمى حسن',
+                        text: 'الألوان جميلة جداً وتناسب جميع الفصول!',
+                        time: 'منذ 20 ساعة'
+                    },
+                    {
+                        id: 2,
+                        userAvatar: 'https://randomuser.me/api/portraits/men/25.jpg',
+                        userName: 'يوسف أحمد',
+                        text: 'التصميم عصري وأنيق، أحببت التفاصيل الدقيقة.',
+                        time: 'منذ 18 ساعة'
+                    },
+                    {
+                        id: 3,
+                        userAvatar: 'https://randomuser.me/api/portraits/women/11.jpg',
+                        userName: 'هبة خالد',
+                        text: 'هل هذا التصميم متوفر بمقاسات كبيرة؟',
+                        time: 'منذ 15 ساعة'
+                    }
+                ]
+            }
+        ];
+        
+        // دالة لإنشاء منشور HTML
+        function createPostElement(post) {
+            return `
+                <div class="post" data-id="${post.id}">
+                    <div class="post-header">
+                        <img src="${post.userAvatar}" class="post-user-avatar" alt="صورة المستخدم">
+                        <div class="post-user-name">${post.userName}</div>
+                        <div class="post-more"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    
+                    <img src="${post.imageUrl}" class="post-image" alt="صورة المنشور">
+                    
+                    <div class="post-actions">
+                        <div class="post-action like ${post.isLiked ? 'liked' : ''}">
+                            <i class="${post.isLiked ? 'fas' : 'far'} fa-heart"></i>
+                        </div>
+                        <div class="post-action comment"><i class="far fa-comment"></i></div>
+                        <div class="post-action share"><i class="far fa-paper-plane"></i></div>
+                        <div class="post-action save">
+                            <i class="${post.isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="post-likes">${post.likes.toLocaleString()} إعجاب</div>
+                    
+                    <div class="post-caption">
+                        <span class="post-caption-user">${post.userName}</span>
+                        ${post.caption}
+                    </div>
+                    
+                    <div class="post-comments" data-id="${post.id}">عرض جميع التعليقات (${post.comments})</div>
+                    
+                    <div class="post-time">${post.time}</div>
+                    
+                    <div class="add-comment">
+                        <input type="text" class="comment-input" placeholder="أضف تعليقاً...">
+                        <button class="post-comment-btn">نشر</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // دالة لإنشاء تعليق HTML
+        function createCommentElement(comment) {
+            return `
+                <div class="comment-item">
+                    <img src="${comment.userAvatar}" class="comment-avatar" alt="صورة المستخدم">
+                    <div class="comment-content">
+                        <div class="comment-user">${comment.userName}</div>
+                        <div class="comment-text">${comment.text}</div>
+                        <div class="comment-time">${comment.time}</div>
+                        <div class="comment-actions">
+                            <span class="comment-action">إعجاب</span>
+                            <span class="comment-action">رد</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // دالة لعرض التعليقات
+        function showComments(postId) {
+            const post = initialPosts.find(p => p.id === postId);
+            if (!post) return;
+            
+            const commentsContainer = document.getElementById('commentsContainer');
+            commentsContainer.innerHTML = '';
+            
+            post.commentsList.forEach(comment => {
+                commentsContainer.innerHTML += createCommentElement(comment);
+            });
+            
+            document.getElementById('commentsModal').style.display = 'flex';
+            document.getElementById('newCommentInput').focus();
+            
+            // حفظ معرف المنشور الحالي في زر الإرسال
+            document.getElementById('sendCommentBtn').setAttribute('data-post-id', postId);
+        }
+        
+        // دالة لإضافة تعليق جديد
+        function addNewComment(postId, commentText) {
+            const post = initialPosts.find(p => p.id === postId);
+            if (!post) return;
+            
+            const newComment = {
+                id: Date.now(),
+                userAvatar: 'https://randomuser.me/api/portraits/women/1.jpg', // صورة المستخدم الحالي
+                userName: 'إيلينور كاميلوت', // اسم المستخدم الحالي
+                text: commentText,
+                time: 'الآن'
+            };
+            
+            post.commentsList.unshift(newComment);
+            post.comments++;
+            
+            // تحديث عرض التعليقات
+            const commentsContainer = document.getElementById('commentsContainer');
+            commentsContainer.innerHTML = createCommentElement(newComment) + commentsContainer.innerHTML;
+            
+            // تحديث عدد التعليقات في المنشور الأصلي
+            const postCommentsElement = document.querySelector(`.post-comments[data-id="${postId}"]`);
+            if (postCommentsElement) {
+                postCommentsElement.textContent = `عرض جميع التعليقات (${post.comments})`;
+            }
+            
+            // مسح حقل الإدخال
+            document.getElementById('newCommentInput').value = '';
+        }
+        
+        // دالة لعرض المنشورات
+        function renderPosts(posts) {
+            const postsContainer = document.getElementById('postsContainer');
+            postsContainer.innerHTML = '';
+            
+            posts.forEach(post => {
+                postsContainer.innerHTML += createPostElement(post);
+            });
+            
+            // إعادة ربط الأحداث بعد عرض المنشورات
+            bindEvents();
+        }
+        
+        // دالة للانتقال السلس بين الصفحات
+        async function loadPage(page) {
+            if (currentPage === page) return;
+            
+            const loadingScreen = document.querySelector('.loading-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            // إضافة تأثير التلاشي
+            mainContent.classList.add('fade-out');
+            loadingScreen.style.display = 'flex';
+            
+            try {
+                // جلب محتوى الصفحة الجديدة
+                const response = await fetch(page);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const html = await response.text();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // استخراج المحتوى الرئيسي من الصفحة الجديدة
+                const newContent = tempDiv.querySelector('.posts-section') || tempDiv.body;
+                
+                // تحديث المحتوى
+                setTimeout(() => {
+                    mainContent.innerHTML = newContent.innerHTML;
+                    mainContent.classList.remove('fade-out');
+                    loadingScreen.style.display = 'none';
+                    currentPage = page;
+                    
+                    // إعادة ربط الأحداث للعناصر الجديدة
+                    bindEvents();
+                }, 300);
+                
+                // تحديث عنوان الصفحة
+                document.title = tempDiv.querySelector('title').textContent;
+                
+                // تحديث تاريخ المتصفح دون إعادة تحميل الصفحة
+                window.history.pushState({ page }, '', page);
+                
+            } catch (error) {
+                console.error('Error loading page:', error);
+                loadingScreen.style.display = 'none';
+                mainContent.classList.remove('fade-out');
+                window.location.href = page; // العودة للطريقة التقليدية في حالة الخطأ
+            }
+        }
+        
+        // دالة لربط الأحداث
+        function bindEvents() {
+            // تمييز العنصر النشط في القائمة السفلية
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    
+                    document.querySelectorAll('.nav-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    loadPage(page);
+                });
+            });
+            
+            // تفاعل زر الإعجاب
+            document.querySelectorAll('.post-action.like').forEach(likeBtn => {
+                likeBtn.addEventListener('click', function() {
+                    const isLiked = this.classList.contains('liked');
+                    const heartIcon = this.querySelector('i');
+                    const likesElement = this.closest('.post').querySelector('.post-likes');
+                    let likesCount = parseInt(likesElement.textContent.replace(/\D/g, ''));
+                    
+                    if (isLiked) {
+                        this.classList.remove('liked');
+                        heartIcon.classList.remove('fas');
+                        heartIcon.classList.add('far');
+                        likesCount--;
+                    } else {
+                        this.classList.add('liked');
+                        heartIcon.classList.remove('far');
+                        heartIcon.classList.add('fas');
+                        likesCount++;
+                        
+                        // تأثير النبض عند الإعجاب
+                        this.style.transform = 'scale(1.2)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 300);
+                    }
+                    
+                    likesElement.textContent = likesCount.toLocaleString() + ' إعجاب';
+                });
+            });
+            
+            // تفاعل زر الحفظ
+            document.querySelectorAll('.post-action.save').forEach(saveBtn => {
+                saveBtn.addEventListener('click', function() {
+                    const bookmarkIcon = this.querySelector('i');
+                    const isSaved = bookmarkIcon.classList.contains('fas');
+                    
+                    if (isSaved) {
+                        bookmarkIcon.classList.remove('fas');
+                        bookmarkIcon.classList.add('far');
+                    } else {
+                        bookmarkIcon.classList.remove('far');
+                        bookmarkIcon.classList.add('fas');
+                    }
+                });
+            });
+            
+            // تفاعل زر الإضافة
+            const addBtn = document.getElementById('addPostButton');
+            const addPostModal = document.getElementById('addPostModal');
+            const cancelPostBtn = document.getElementById('cancelPostBtn');
+            const submitPostBtn = document.getElementById('submitPostBtn');
+            const postImagesInput = document.getElementById('postImages');
+            const fileUploadLabel = document.getElementById('fileUploadLabel');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const removeFile = document.getElementById('removeFile');
+            const imagesPreviewContainer = document.getElementById('imagesPreviewContainer');
+            const selectedCount = document.getElementById('selectedCount');
+            const postCaptionInput = document.getElementById('postCaption');
+            const charCounter = document.getElementById('charCounter');
+            const uploadingScreen = document.getElementById('uploadingScreen');
+            const confirmationMessage = document.getElementById('confirmationMessage');
+            const confirmBtn = document.getElementById('confirmBtn');
+            
+            // تحديث عداد الأحرف
+            postCaptionInput.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                charCounter.textContent = `${currentLength}/5000`;
+                
+                if (currentLength > 5000) {
+                    charCounter.classList.add('error');
+                } else {
+                    charCounter.classList.remove('error');
+                }
+            });
+            
+            // معالجة اختيار الملفات
+            postImagesInput.addEventListener('change', function() {
+                const files = this.files;
+                
+                // التحقق من عدد الملفات
+                if (files.length > 20) {
+                    alert('يمكنك تحميل حد أقصى 20 صورة فقط');
+                    resetFileInput();
+                    return;
+                }
+                
+                // التحقق من أنواع الملفات
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                    
+                    if (!validTypes.includes(file.type)) {
+                        alert('نوع الملف غير مدعوم. الرجاء اختيار صور بصيغة JPEG أو PNG فقط');
+                        resetFileInput();
+                        return;
+                    }
+                }
+                
+                // عرض عدد الصور المختارة
+                selectedCount.textContent = `تم اختيار ${files.length} صورة`;
+                selectedCount.style.display = 'block';
+                
+                // عرض معلومات الملف
+                fileInfo.style.display = 'block';
+                fileUploadLabel.style.display = 'none';
+                
+                // معاينة الصور
+                imagesPreviewContainer.innerHTML = '';
+                imagesPreviewContainer.style.display = 'flex';
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const previewItem = document.createElement('div');
+                        previewItem.style.position = 'relative';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'image-preview-item';
+                        
+                        const removeBtn = document.createElement('span');
+                        removeBtn.className = 'remove-image';
+                        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        removeBtn.onclick = function() {
+                            removeImage(i);
+                        };
+                        
+                        previewItem.appendChild(img);
+                        previewItem.appendChild(removeBtn);
+                        imagesPreviewContainer.appendChild(previewItem);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // دالة لإزالة صورة معينة
+            function removeImage(index) {
+                const files = Array.from(postImagesInput.files);
+                files.splice(index, 1);
+                
+                // إنشاء DataTransfer جديد وتعيين الملفات المتبقية
+                const dataTransfer = new DataTransfer();
+                files.forEach(file => dataTransfer.items.add(file));
+                postImagesInput.files = dataTransfer.files;
+                
+                // إعادة تحميل المعاينة
+                postImagesInput.dispatchEvent(new Event('change'));
+            }
+            
+            // إزالة جميع الملفات المختارة
+            removeFile.addEventListener('click', function(e) {
+                e.stopPropagation();
+                resetFileInput();
+            });
+            
+            // إعادة تعيين حقل الملف
+            function resetFileInput() {
+                postImagesInput.value = '';
+                fileInfo.style.display = 'none';
+                fileUploadLabel.style.display = 'block';
+                imagesPreviewContainer.style.display = 'none';
+                selectedCount.style.display = 'none';
+                imagesPreviewContainer.innerHTML = '';
+            }
+            
+            // تنسيق حجم الملف
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            if (addBtn) {
+                addBtn.addEventListener('click', function() {
+                    // إعادة تعيين النموذج عند فتحه
+                    resetFileInput();
+                    postCaptionInput.value = '';
+                    charCounter.textContent = '0/5000';
+                    charCounter.classList.remove('error');
+                    
+                    addPostModal.style.display = 'flex';
+                });
+            }
+            
+            if (cancelPostBtn) {
+                cancelPostBtn.addEventListener('click', function() {
+                    addPostModal.style.display = 'none';
+                });
+            }
+            
+            if (submitPostBtn) {
+                submitPostBtn.addEventListener('click', function() {
+                    const files = postImagesInput.files;
+                    const caption = postCaptionInput.value.trim();
+                    
+                    // التحقق من الصور
+                    if (!files || files.length === 0) {
+                        alert('الرجاء اختيار صورة واحدة على الأقل للمنشور');
+                        return;
+                    }
+                    
+                    if (files.length > 20) {
+                        alert('يمكنك تحميل حد أقصى 20 صورة فقط');
+                        return;
+                    }
+                    
+                    // التحقق من النص
+                    if (!caption) {
+                        alert('الرجاء إدخال نص المنشور');
+                        return;
+                    }
+                    
+                    if (caption.length > 5000) {
+                        alert('نص المنشور يجب أن لا يتجاوز 5000 حرف');
+                        return;
+                    }
+                    
+                    // إظهار شاشة التحميل
+                    uploadingScreen.style.display = 'flex';
+                    addPostModal.style.display = 'none';
+                    
+                    // محاكاة عملية رفع المنشور (في الواقع الفعلي، هنا ستقوم بإرسال البيانات إلى الخادم)
+                    setTimeout(() => {
+                        // إنشاء منشور جديد (سنستخدم الصورة الأولى فقط للعرض)
+                        const newPost = {
+                            id: Date.now(),
+                            userAvatar: 'https://randomuser.me/api/portraits/women/1.jpg', // صورة افتراضية للمستخدم الحالي
+                            userName: 'إيلينور كاميلوت', // اسم المستخدم الحالي
+                            imageUrl: URL.createObjectURL(files[0]), // استخدام عنوان URL للصورة المختارة
+                            likes: 0,
+                            caption: caption,
+                            comments: 0,
+                            time: 'الآن',
+                            isLiked: false,
+                            isSaved: false,
+                            commentsList: []
+                        };
+                        
+                        // إضافة المنشور الجديد إلى بداية القائمة
+                        initialPosts.unshift(newPost);
+                        
+                        // إعادة عرض المنشورات
+                        renderPosts(initialPosts);
+                        
+                        // إخفاء شاشة التحميل وإظهار رسالة التأكيد
+                        uploadingScreen.style.display = 'none';
+                        confirmationMessage.style.display = 'block';
+                        
+                        // التمرير إلى الأعلى لرؤية المنشور الجديد
+                        window.scrollTo(0, 0);
+                    }, 2000);
+                });
+            }
+            
+            // إغلاق رسالة التأكيد
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function() {
+                    confirmationMessage.style.display = 'none';
+                });
+            }
+            
+            // تفاعل إضافة تعليق
+            document.querySelectorAll('.post-comment-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentInput = this.parentElement.querySelector('.comment-input');
+                    const commentText = commentInput.value.trim();
+                    const postElement = this.closest('.post');
+                    const postId = parseInt(postElement.getAttribute('data-id'));
+                    const post = initialPosts.find(p => p.id === postId);
+                    
+                    if (commentText) {
+                        // زيادة عدد التعليقات
+                        post.comments++;
+                        
+                        // إضافة التعليق إلى القائمة
+                        const newComment = {
+                            id: Date.now(),
+                            userAvatar: 'https://randomuser.me/api/portraits/women/1.jpg', // صورة المستخدم الحالي
+                            userName: 'إيلينور كاميلوت', // اسم المستخدم الحالي
+                            text: commentText,
+                            time: 'الآن'
+                        };
+                        
+                        post.commentsList.unshift(newComment);
+                        
+                        // تحديث عدد التعليقات في الواجهة
+                        const commentsElement = postElement.querySelector('.post-comments');
+                        commentsElement.textContent = `عرض جميع التعليقات (${post.comments})`;
+                        
+                        // مسح حقل التعليق
+                        commentInput.value = '';
+                    }
+                });
+            });
+            
+            // تفاعل عرض التعليقات
+            document.querySelectorAll('.post-comments').forEach(commentsLink => {
+                commentsLink.addEventListener('click', function() {
+                    const postId = parseInt(this.getAttribute('data-id'));
+                    showComments(postId);
+                });
+            });
+            
+            // إغلاق نافذة التعليقات
+            document.getElementById('closeCommentsBtn').addEventListener('click', function() {
+                document.getElementById('commentsModal').style.display = 'none';
+            });
+            
+            // إرسال تعليق جديد
+            document.getElementById('sendCommentBtn').addEventListener('click', function() {
+                const commentInput = document.getElementById('newCommentInput');
+                const commentText = commentInput.value.trim();
+                const postId = parseInt(this.getAttribute('data-post-id'));
+                
+                if (commentText) {
+                    addNewComment(postId, commentText);
+                }
+            });
+            
+            // إرسال تعليق عند الضغط على Enter
+            document.getElementById('newCommentInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const commentText = this.value.trim();
+                    const postId = parseInt(document.getElementById('sendCommentBtn').getAttribute('data-post-id'));
+                    
+                    if (commentText) {
+                        addNewComment(postId, commentText);
+                    }
+                }
+            });
+        }
+        
+        // التحقق من صلاحيات المستخدم (للمسؤول فقط)
+        function checkAdminStatus() {
+            // هذه قيمة افتراضية - يجب استبدالها بالتحقق الحقيقي من صلاحيات المستخدم
+            const isAdmin = true;
+            
+            if (isAdmin) {
+                // إظهار زر الإضافة
+                document.getElementById('addPostButton').style.display = 'flex';
+            }
+        }
+        
+        // التعامل مع زر الرجوع في المتصفح
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.page) {
+                loadPage(event.state.page);
+            }
+        });
+        
+        // عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminStatus();
+            
+            // عرض المنشورات الأولية
+            renderPosts(initialPosts);
+            
+            // تخزين حالة الصفحة الأولى
+            window.history.replaceState({ page: currentPage }, '', currentPage);
+        });
+    </script>
+</body>
+</html>

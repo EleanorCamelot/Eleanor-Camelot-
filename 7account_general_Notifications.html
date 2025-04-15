@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إيلينور كاميلوت - إعدادات الإشعارات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap');
+        
+        :root {
+            --primary: #222222;
+            --gray: #f5f5f5;
+            --dark-gray: #e0e0e0;
+            --text: #222222;
+            --white: #ffffff;
+            --top-bar: #222222;
+            --red: #e74c3c;
+            --section-title: #000000;
+            --blue: #2980b9;
+        }
+        
+        /* ألوان الوضع الليلي */
+        .dark-mode {
+            --primary: #f5f5f5;
+            --gray: #222222;
+            --dark-gray: #444444;
+            --text: #ffffff;
+            --white: #121212;
+            --top-bar: #121212;
+            --section-title: #f5f5f5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text);
+            padding-top: 60px;
+            min-height: 100vh;
+        }
+        
+        /* شاشة التحميل */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            background-color: var(--top-bar);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: #ffffff;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* محتوى الصفحة */
+        .settings-container {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--section-title);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--dark-gray);
+            font-weight: bold;
+        }
+        
+        .settings-menu {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .settings-menu li {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .settings-menu li:hover {
+            background-color: var(--gray);
+        }
+        
+        .settings-menu li:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+        
+        .menu-text {
+            flex: 1;
+            color: var(--text);
+        }
+        
+        .menu-value {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+        
+        .menu-arrow {
+            color: var(--dark-gray);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .notification-type {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-top: 5px;
+        }
+        
+        .info-note {
+            background-color: var(--gray);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        /* إضافة هذه القاعدة للحفاظ على اللون الأبيض في الوضع الليلي */
+        .dark-mode .top-bar,
+        .dark-mode .back-btn {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة التحميل -->
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">جاري التحميل...</div>
+    </div>
+    
+    <!-- الشريط العلوي مع زر الرجوع -->
+    <div class="top-bar">
+        <div class="back-btn" onclick="navigateTo('7account.html')">‹</div>
+        <div class="app-title">إعدادات الإشعارات</div>
+        <div></div>
+    </div>
+    
+    <!-- محتوى الصفحة -->
+    <div class="settings-container">
+        <h3 class="section-title">
+            <i class="fas fa-bell"></i>
+            <span>تفضيلات الإشعارات</span>
+        </h3>
+        
+        <ul class="settings-menu">
+            <!-- الإشعارات العامة -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="menu-text">
+                        تفعيل الإشعارات
+                        <div class="notification-type">تشمل جميع أنواع الإشعارات</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="generalNotifications" checked>
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- إشعارات الرسائل -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="menu-text">
+                        إشعارات الرسائل
+                        <div class="notification-type">عند تلقي رسائل جديدة</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="messageNotifications" checked>
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- إشعارات التحديثات -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="menu-text">
+                        إشعارات التحديثات
+                        <div class="notification-type">عند صدور تحديثات جديدة</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="updateNotifications" checked>
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- إشعارات الترويجية -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-ad"></i>
+                    </div>
+                    <div class="menu-text">
+                        الإشعارات الترويجية
+                        <div class="notification-type">عروض خاصة وتخفيضات</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="promotionalNotifications">
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- صوت الإشعارات -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <div class="menu-text">
+                        صوت الإشعارات
+                        <div class="notification-type">تشغيل صوت عند وصول إشعار</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notificationSound" checked>
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- اهتزاز الإشعارات -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-vibrate"></i>
+                    </div>
+                    <div class="menu-text">
+                        اهتزاز الإشعارات
+                        <div class="notification-type">تفعيل الاهتزاز عند وصول إشعار</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="notificationVibration" checked>
+                    <span class="slider"></span>
+                </label>
+            </li>
+            
+            <!-- إشعارات البريد الإلكتروني -->
+            <li>
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-at"></i>
+                    </div>
+                    <div class="menu-text">
+                        إشعارات البريد الإلكتروني
+                        <div class="notification-type">إرسال نسخة من الإشعارات إلى البريد الإلكتروني</div>
+                    </div>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="emailNotifications">
+                    <span class="slider"></span>
+                </label>
+            </li>
+        </ul>
+        
+        <h3 class="section-title" style="margin-top: 30px;">
+            <i class="fas fa-sliders-h"></i>
+            <span>خيارات متقدمة</span>
+        </h3>
+        
+        <ul class="settings-menu">
+            <!-- تخصيص الإشعارات -->
+            <li onclick="navigateTo('notification_customization.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="menu-text">تخصيص الإشعارات</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+            
+            <!-- أوقات الهدوء -->
+            <li onclick="navigateTo('quiet_hours.html')">
+                <div class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <div class="menu-text">أوقات الهدوء</div>
+                    <div class="menu-value">غير مفعل</div>
+                </div>
+                <div class="menu-arrow">›</div>
+            </li>
+        </ul>
+        
+        <div class="info-note">
+            <i class="fas fa-info-circle"></i> ملاحظة: بعض التغييرات قد تتطلب إعادة تشغيل التطبيق لتصبح فعالة.
+        </div>
+    </div>
+
+    <script>
+        // دالة للانتقال إلى صفحة مع عرض شاشة التحميل
+        function navigateTo(page) {
+            const loadingScreen = document.querySelector('.loading-screen');
+            loadingScreen.style.display = 'flex';
+            
+            setTimeout(() => {
+                window.location.href = page;
+            }, 500);
+        }
+        
+        // تحميل تفضيلات الإشعارات المحفوظة
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحميل تفضيل الوضع الليلي إذا كان محفوظاً
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                
+                // تطبيق لون شريط العنوان عند التحميل
+                const topBar = document.querySelector('.top-bar');
+                topBar.style.backgroundColor = '#121212';
+                topBar.style.color = '#ffffff';
+            }
+            
+            // تحميل إعدادات الإشعارات من localStorage
+            const notificationSettings = {
+                general: localStorage.getItem('generalNotifications') !== 'false',
+                messages: localStorage.getItem('messageNotifications') !== 'false',
+                updates: localStorage.getItem('updateNotifications') !== 'false',
+                promotional: localStorage.getItem('promotionalNotifications') === 'true',
+                sound: localStorage.getItem('notificationSound') !== 'false',
+                vibration: localStorage.getItem('notificationVibration') !== 'false',
+                email: localStorage.getItem('emailNotifications') === 'true'
+            };
+            
+            // تطبيق الإعدادات على التبديلات
+            document.getElementById('generalNotifications').checked = notificationSettings.general;
+            document.getElementById('messageNotifications').checked = notificationSettings.messages;
+            document.getElementById('updateNotifications').checked = notificationSettings.updates;
+            document.getElementById('promotionalNotifications').checked = notificationSettings.promotional;
+            document.getElementById('notificationSound').checked = notificationSettings.sound;
+            document.getElementById('notificationVibration').checked = notificationSettings.vibration;
+            document.getElementById('emailNotifications').checked = notificationSettings.email;
+            
+            // إضافة مستمعين للأحداث لحفظ التغييرات
+            document.querySelectorAll('.toggle-switch input').forEach(switchInput => {
+                switchInput.addEventListener('change', function() {
+                    const settingId = this.id;
+                    localStorage.setItem(settingId, this.checked);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
